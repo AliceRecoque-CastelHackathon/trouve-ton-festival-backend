@@ -4,8 +4,8 @@ import { FestivalSubCategoryEntity } from "src/festival/entities/ref-festival-su
 
 interface IFestivalGetDto {
   id: number;
-  category: number;
-  subCategory: number[];
+  category: FestivalCategoryEntity;
+  subCategory: FestivalSubCategoryEntity[];
   region: string;
   department: string;
   zipcode: number;
@@ -35,9 +35,9 @@ export class FestivalGetDto {
 
   constructor(data?: IFestivalGetDto) {
     if (data) {
-      this.id = data['id'];
-      this.idCategory = data.category;
-      this.idSubCategory = data.subCategory;
+      this.id = data.id;
+      this.idCategory = data.category.id;
+      this.idSubCategory = data.subCategory.map(e=> e.id);
       this.region = data['region'];
       this.department = data['department'];
       this.zipcode = data['zipcode'];
