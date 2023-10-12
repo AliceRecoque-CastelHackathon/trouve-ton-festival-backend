@@ -1,3 +1,4 @@
+import { FestivalEntity } from '../../festival/entities/festival.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 import { NodeEnvEnum } from './enums/node-env.enum';
 
@@ -18,5 +19,5 @@ export const dataSourceOpt = {
   debug: false,
   migrations: migrationsArray,
   migrationsTableName: 'migrations_history',
-  entities: [UserEntity],
+  entities: [UserEntity, FestivalEntity],
 };
