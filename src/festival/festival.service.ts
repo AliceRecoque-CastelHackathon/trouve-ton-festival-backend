@@ -5,6 +5,7 @@ import { Entity, Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 
 import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+import { FestivalCreateDto } from './dto/in/festival-create.dto';
 
 import { I_open_data_festival_response } from 'src/api-consumer/interface/i_open_data_festival_response';
 import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_festival';
@@ -88,4 +89,9 @@ export class FestivalService {
 
 
 
+  async create(festivalCreateDto: FestivalCreateDto): Promise<FestivalGetDto> {
+    const newFestival: FestivalEntity = this.festivalsRepository.create(festivalCreateDto);
+    await this.festivalsRepository.save(newFestival);
+    return new FestivalGetDto(newFestival);
+  }
 }

@@ -5,6 +5,7 @@ import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalService } from './festival.service';
 import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
 import { AllowAnonymous } from '../common/decorator/allow-anonymous.decorator';
+import { FestivalCreateDto } from './dto/in/festival-create.dto';
 
 @ApiTags('festival')
 @AllowAnonymous()
@@ -22,11 +23,20 @@ export class FestivalController {
   }
 
   @ApiResponse({
-    description: 'A list of festival',
-    type: [FestivalGetDto],
+    description: 'The festival with specified id',
+    type: FestivalGetDto,
   })
   @Get('/byId/:id')
   async findById(@Param('id', ParseIntPipe) festivalId: number,): Promise<FestivalGetDto | null> {
     return await this.festivalService.getById(festivalId);
+  }
+
+  @ApiResponse({
+    description: 'The created festival',
+    type: [FestivalGetDto],
+  })
+  @Post('create')
+  async create(@Body() festivalCreateDto: FestivalCreateDto): Promise<FestivalGetDto> {
+    return await this.festivalService.create(festivalCreateDto);
   }
 }
