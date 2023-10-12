@@ -31,25 +31,24 @@ export class ApiConsumerService {
     let responseObject: I_open_data_festival_response  ;
     do{
       try {
-        const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url)
+        this.httpService.axiosRef.get<I_open_data_festival_response>(url)
         .catch(error =>{
           throw new BadRequestException(` external url ${url} le serveur de l'api externe n'as pas donnée de réponse \n`+ error);
         })
         .then(response=>
         {
           try {
-           responseObject = response.data;            
+           responseObject = response.data;
+           this.festivalService.populateFestivals(responseObject);
           } catch (error) {
             new HttpException(`l'objet n'a pas la bonne forme `,200);
-          try {
-            if (festivals_counts== 0){
-             festivals_counts = responseObject.total_count;
-            }            
-          } catch (error) {
-            new HttpException(`total_count n'était pas dans l'objet `,200 );
-          }
-          this.festivalService.populateFestivals(responseObject);
-  
+            try {
+              if (festivals_counts== 0){
+              festivals_counts = responseObject.total_count;
+              }
+            } catch (error) {
+              new HttpException(`total_count n'était pas dans l'objet `,200 );
+            }
           }
         }
         )
