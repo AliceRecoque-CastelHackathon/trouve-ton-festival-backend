@@ -10,7 +10,7 @@ interface IFestivalGetDto {
   address: string;
   website?: string | null;
   email: string;
-  creationDate?: Date | null;
+  creationDate?: string | null;
   geoPosX?: number | null;
   geoPosY?: number | null;
   externalId?: string | null;
@@ -26,7 +26,7 @@ export class FestivalGetDto {
   address: string;
   website?: string | null;
   email: string;
-  creationDate?: Date | null;
+  creationDate?: string | null;
   geoPosX?: number | null;
   geoPosY?: number | null;
   externalId?: string | null;

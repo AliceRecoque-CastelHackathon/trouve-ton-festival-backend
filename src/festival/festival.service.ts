@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FestivalEntity } from './entities/festival.entity';
 import { Entity, Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
+
+import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+
 import { I_open_data_festival_response } from 'src/api-consumer/interface/i_open_data_festival_response';
 import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_festival';
+
 
 @Injectable()
 export class FestivalService {
@@ -13,18 +17,43 @@ export class FestivalService {
     private festivalsRepository: Repository<FestivalEntity>,
   ) { }
 
-  async getAll(limit: number, offset: number): Promise<FestivalGetDto[]> {
-    const entities: FestivalEntity[] = await this.festivalsRepository.find({
-      skip: offset,
-      take: limit
-    });
+  async getAll(festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+    let selectOpt: any = undefined;
+    if (festivalAnyDto.categoryId) {
+      selectOpt = {idCategory : festivalAnyDto.categoryId};
+    }
+    if (festivalAnyDto.region) {
+      if (!selectOpt) {
+        selectOpt = {region : festivalAnyDto.region};
+      }
+      else {
+        selectOpt.region = festivalAnyDto.region;
+      }
+    }
+
+    const festivalEntity: FestivalEntity[] = await this.festivalsRepository.find(
+      {
+        skip: festivalAnyDto.offset ?? 0,
+        take: festivalAnyDto.limit ?? 10,
+        ...(selectOpt ? {select: selectOpt} : {})
+      }
+    );
     const results: FestivalGetDto[] = [];
 
-    entities.forEach(async (festivalEntity: FestivalEntity) => {
+    festivalEntity.forEach(async (festivalEntity: FestivalEntity) => {
       results.push(new FestivalGetDto(festivalEntity));
     });
 
     return results;
+  }
+
+
+  async getById(festivalId: number): Promise<FestivalGetDto | null> {
+    const festivalEntity: FestivalEntity | null = await this.festivalsRepository.findOneBy({
+      id: festivalId
+    });
+
+    return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
   }
 
     async populateFestivals(data :I_open_data_festival_response){
@@ -56,6 +85,7 @@ export class FestivalService {
     private async getOrCreateSubcategory(name: string){
 
     }
+
 
 
 }
