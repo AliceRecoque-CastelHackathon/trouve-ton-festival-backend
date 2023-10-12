@@ -9,12 +9,12 @@ interface IFestivalGetDto {
   region: string;
   department: string;
   zipcode: number;
-  address?: string | null;
+  address: string;
   website?: string | null;
   email: string;
   creationDate?: string | null;
-  geoPosX?: number | null;
-  geoPosY?: number | null;
+  geoPosX: number;
+  geoPosY: number;
   externalId?: string | null;
 }
 
@@ -25,12 +25,12 @@ export class FestivalGetDto {
   region: string;
   department: string;
   zipcode: number;
-  address?: string | null;
+  address: string;
   website?: string | null;
   email: string;
   creationDate?: string | null;
-  geoPosX?: number | null;
-  geoPosY?: number | null;
+  geoPosX: number;
+  geoPosY: number;
   externalId?: string | null;
 
   constructor(data?: IFestivalGetDto) {
