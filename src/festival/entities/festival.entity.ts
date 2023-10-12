@@ -34,20 +34,20 @@ export class FestivalEntity {
   adress: string;
 
   @Column({ type: 'varchar', nullable: true })
-  website: string;
+  website: string | null;
 
   @Column({ type: 'varchar', length: '64' })
   email: string;
 
   @Column({ name: 'creation_date', type: 'date', nullable: true })
-  creationDate: Date
+  creationDate: Date | null;
 
   @Column({ name: 'geo_pos_x', type: 'float', nullable: true })
-  geoPosX: number
+  geoPosX: number | null;
 
   @Column({ name: 'geo_pos_y', type: 'float', nullable: true })
-  geoPosY: number
+  geoPosY: number | null;
 
   @Column({ name: 'external_id', type: 'varchar', length: '30', nullable: true })
-  externalId: string
+  externalId: string | null;
 }
