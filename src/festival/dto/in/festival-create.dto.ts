@@ -9,7 +9,7 @@ export class FestivalCreateDto {
   idSubCategory: number[];
 
   @IsString()
-  @Min(5)
+  @MinLength(5)
   name: string;
 
   @IsString()
@@ -19,7 +19,7 @@ export class FestivalCreateDto {
   department: string;
 
   @IsNumber()
-  @IsPostalCode()
+  @Length(5, 5)
   zipcode: number;
 
   @IsString()
