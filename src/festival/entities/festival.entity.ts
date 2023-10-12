@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { FestivalCategoryEntity } from './ref-festival-category.entity copy';
+import { FestivalSubCategoryEntity } from './ref-festival-subcategory.entity';
 
 @Entity({
   name: 'festival',
@@ -11,16 +13,17 @@ export class FestivalEntity {
   id: number;
 
   @Column({ name: 'id_category' })
+  @ManyToOne(()=> FestivalCategoryEntity)
   idCategory: number;
 
   @Column({ name: 'id_sub_category' })
-  idSubCategory: number;
+  @ManyToMany(()=>FestivalSubCategoryEntity)
+  @JoinTable({name : 'J_estival_subcategory'})
+  idSubCategory: number[];
 
-  /** prénom */
   @Column({ type: 'varchar', length: 100 })
   region: string;
 
-  /** nom */
   @Column({ type: 'varchar', length: 100 })
   department: string;
 
@@ -31,7 +34,7 @@ export class FestivalEntity {
   zipcode: number;
 
   @Column({ type: 'varchar' })
-  adress: string;
+  address: string|null;
 
   @Column({ type: 'varchar', nullable: true })
   website: string | null;
