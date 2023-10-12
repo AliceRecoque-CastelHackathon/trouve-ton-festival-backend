@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FestivalEntity } from './entities/festival.entity';
-import { Entity, Repository } from 'typeorm';
+import { Entity, In, Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalGetManyDto } from './dto/in/festival-get-many.dto';
 import { FestivalCreateDto } from './dto/in/festival-create.dto';
@@ -10,6 +10,7 @@ import { I_open_data_festival_response } from 'src/api-consumer/interface/i_open
 import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_festival';
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
+import { FestivalUpdateDto } from './dto/in/festival-update.dto';
 
 
 @Injectable()
@@ -20,7 +21,7 @@ export class FestivalService {
     @InjectRepository(FestivalCategoryEntity)
     private categoryRepository: Repository<FestivalCategoryEntity>,
     @InjectRepository(FestivalSubCategoryEntity)
-    private subcategoryRepository: Repository<FestivalSubCategoryEntity>,
+    private subCategoryRepository: Repository<FestivalSubCategoryEntity>,
 
   ) { }
 
@@ -99,9 +100,9 @@ export class FestivalService {
     });
   }
   /**
-   * 
-   * @param name 
-   * @returns 
+   *
+   * @param name
+   * @returns
    */
   private async getOrCreateCategory(name: string | null): Promise<FestivalSubCategoryEntity | null> {
     if (name == null) {
@@ -118,30 +119,65 @@ export class FestivalService {
     return category;
   }
   /**
-   * 
-   * @param name 
-   * @returns 
+   *
+   * @param name
+   * @returns
    */
   private async getOrCreateSubcategory(name: string | null): Promise<FestivalSubCategoryEntity | null> {
     if (name == null) {
       return null;
     }
-    let category = await this.subcategoryRepository.findOneBy({
+    let category = await this.subCategoryRepository.findOneBy({
       label: name
     })
     if (!category) {
       category = new FestivalSubCategoryEntity();
       category.label = name;
-      category = await this.subcategoryRepository.save(category);
+      category = await this.subCategoryRepository.save(category);
     }
     return category;
   }
-
-
 
   async create(festivalCreateDto: FestivalCreateDto): Promise<FestivalGetDto> {
     const newFestival: FestivalEntity = this.festivalsRepository.create(festivalCreateDto);
     await this.festivalsRepository.save(newFestival);
     return new FestivalGetDto(newFestival);
+  }
+
+  async update(festivalUpdateDto: FestivalUpdateDto): Promise<FestivalGetDto> {
+    const festival: FestivalEntity | null = await this.festivalsRepository.findOneBy({
+      id: festivalUpdateDto.id
+    })
+    if (festival) {
+      const festivalCategory: FestivalCategoryEntity | null = await this.categoryRepository.findOneBy({
+        id: festivalUpdateDto.idCategory
+      })
+      const festivalSubCategory: FestivalCategoryEntity[] | null = await this.subCategoryRepository.findBy({
+        id: In(festivalUpdateDto.idSubCategory)
+      })
+
+      if (festivalCategory) {
+        festival.category = festivalCategory
+      }
+      if (festivalSubCategory) {
+        festival.subCategory = festivalSubCategory;
+      }
+
+      festival.region = festivalUpdateDto.region;
+      festival.department = festivalUpdateDto.department;
+      festival.zipcode = festivalUpdateDto.zipcode;
+      festival.address = festivalUpdateDto.address;
+      if (festivalUpdateDto.website !== undefined)
+        festival.website = festivalUpdateDto.website;
+      festival.email = festivalUpdateDto.email;
+      festival.geoPosX = festivalUpdateDto.geoPosX;
+      festival.geoPosY = festivalUpdateDto.geoPosY;
+
+      await this.festivalsRepository.save(festival);
+
+      return new FestivalGetDto(festival);
+    }else {
+      throw new BadRequestException('festival to modify not found');
+    }
   }
 }
