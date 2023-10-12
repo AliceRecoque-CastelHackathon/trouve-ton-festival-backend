@@ -43,6 +43,12 @@ export class FestivalEntity {
   @Column({ name: 'creation_date', type: 'varchar', length: 4, nullable: true })
   creationDate: string | null;
 
+  @Column({ name: 'date_start', type: 'date' })
+  dateStart: Date;
+
+  @Column({ name: 'date_end', type: 'date' })
+  dateEnd: Date;
+
   @Column({ name: 'geo_pos_x', type: 'float', nullable: true })
   geoPosX: number;
 

@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Max, Min, MinLength } from "class-validator";
+import { IsArray, IsDate, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Max, Min, MinLength } from "class-validator";
 
 export class FestivalCreateDto {
   @IsNumber()
@@ -40,4 +40,10 @@ export class FestivalCreateDto {
 
   @IsNumber()
   geoPosY: number;
+
+  @IsDate()
+  dateStart: Date;
+
+  @IsDate()
+  dateEnd: Date;
 }

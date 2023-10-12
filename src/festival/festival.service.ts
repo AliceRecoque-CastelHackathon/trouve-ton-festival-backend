@@ -172,6 +172,8 @@ export class FestivalService {
       festival.email = festivalUpdateDto.email;
       festival.geoPosX = festivalUpdateDto.geoPosX;
       festival.geoPosY = festivalUpdateDto.geoPosY;
+      festival.dateStart = festivalUpdateDto.dateStart;
+      festival.dateEnd = festivalUpdateDto.dateEnd;
 
       await this.festivalsRepository.save(festival);
 
