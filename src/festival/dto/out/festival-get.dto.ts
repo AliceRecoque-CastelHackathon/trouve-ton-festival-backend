@@ -20,8 +20,8 @@ interface IFestivalGetDto {
 
 export class FestivalGetDto {
   id: number;
-  idCategory: number;
-  idSubCategory: number[];
+  category: FestivalCategoryEntity;
+  subCategory: FestivalSubCategoryEntity[];
   region: string;
   department: string;
   zipcode: number;
@@ -36,8 +36,8 @@ export class FestivalGetDto {
   constructor(data?: IFestivalGetDto) {
     if (data) {
       this.id = data.id;
-      this.idCategory = data.category.id;
-      this.idSubCategory = data.subCategory.map(e=> e.id);
+      this.category = data.category
+      this.subCategory = data.subCategory;
       this.region = data['region'];
       this.department = data['department'];
       this.zipcode = data['zipcode'];
