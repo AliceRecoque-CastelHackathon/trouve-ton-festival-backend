@@ -1,6 +1,10 @@
-import { IsArray, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, MinLength } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, MinLength } from "class-validator";
 
-export class FestivalCreateDto {
+export class FestivalUpdateDto {
+  @IsNumber()
+  @IsPositive()
+  id: number;
+
   @IsNumber()
   @IsPositive()
   idCategory: number;
@@ -27,9 +31,6 @@ export class FestivalCreateDto {
 
   @IsEmail()
   email: string;
-
-  @IsOptional()
-  creationDate?: string | null;
 
   @IsNumber()
   geoPosX: number;

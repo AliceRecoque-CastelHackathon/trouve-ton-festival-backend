@@ -54,3 +54,5 @@ public
 
 # mail template mock data
 *.hbs.json
+
+metadata.ts

@@ -44,10 +44,10 @@ export class FestivalEntity {
   creationDate: string | null;
 
   @Column({ name: 'geo_pos_x', type: 'float', nullable: true })
-  geoPosX: number | null;
+  geoPosX: number;
 
   @Column({ name: 'geo_pos_y', type: 'float', nullable: true })
-  geoPosY: number | null;
+  geoPosY: number;
 
   @Column({ name: 'external_id', type: 'varchar', length: '30', nullable: true })
   externalId: string | null;
