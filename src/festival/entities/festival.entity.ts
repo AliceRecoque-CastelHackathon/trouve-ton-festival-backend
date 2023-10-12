@@ -17,7 +17,7 @@ export class FestivalEntity {
 
   @ManyToMany(()=>FestivalSubCategoryEntity)
   @JoinTable({name : 'J_festival_subcategory'})
-  subCategory: FestivalSubCategoryEntity[]|null;
+  subCategory: FestivalSubCategoryEntity[];
 
   @Column({ type: 'varchar', length: 100 })
   region: string;

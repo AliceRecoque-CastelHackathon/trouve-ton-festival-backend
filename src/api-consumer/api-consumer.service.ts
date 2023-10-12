@@ -2,10 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { I_open_data_festival_response } from './interface/i_open_data_festival_response';
-import { throws } from 'assert';
-import { json } from 'stream/consumers';
 import { FestivalService } from '../festival/festival.service';
-import { FestivalEntity } from '../festival/entities/festival.entity';
 
 @Injectable()
 export class ApiConsumerService {
@@ -30,22 +27,41 @@ export class ApiConsumerService {
   async getFestivals(offset: number = 0){
     let festivals_counts:number = 0;
 
+    const url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`
+    let responseObject: I_open_data_festival_response  ;
     do{
       try {
-        const response = await this.httpService.axiosRef.get(`this.baseUrl?limit=${this.fetch_size}&offset=${offset}`);
-        const responseObject: any = JSON.parse(response.data);
-        if (festivals_counts== 0){
-          festivals_counts = responseObject["total_count"];
+        const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url)
+        .catch(error =>{
+          throw new BadRequestException(` external url ${url} le serveur de l'api externe n'as pas donnée de réponse \n`+ error);
+        })
+        .then(response=>
+        {
+          try {
+           responseObject = response.data;            
+          } catch (error) {
+            new HttpException(`l'objet n'a pas la bonne forme `,200);
+          try {
+            if (festivals_counts== 0){
+             festivals_counts = responseObject.total_count;
+            }            
+          } catch (error) {
+            new HttpException(`total_count n'était pas dans l'objet `,200 );
+          }
+          this.festivalService.populateFestivals(responseObject);
+  
+          }
         }
-        this.festivalService.populateFestivals(responseObject);
-        //@TODO appel de festival service pour lui passer la liste à enregistrer
+        )
 
       } catch (error) {
-        throw new BadRequestException("le serveur de l'api externe n'as pas donnée de réponse");
+        throw new BadRequestException(`la totalité de la réquète à l'api externe à échoué. ${url} ` + error);
       }
 
 
     }while (offset < festivals_counts- this.fetch_size);
+
+    console.info(`imports terminés.`)
 
   }
 }

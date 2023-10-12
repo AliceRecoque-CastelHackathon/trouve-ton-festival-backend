@@ -6,8 +6,12 @@ import { FestivalEntity } from './entities/festival.entity';
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
 
+
 @Module({
-  imports: [TypeOrmModule.forFeature([FestivalEntity,FestivalCategoryEntity,FestivalSubCategoryEntity])],
+  imports: [
+    TypeOrmModule.forFeature([FestivalEntity,FestivalCategoryEntity,FestivalSubCategoryEntity]),
+   
+  ],
   controllers: [FestivalController],
   providers: [FestivalService],
   exports: [FestivalService]

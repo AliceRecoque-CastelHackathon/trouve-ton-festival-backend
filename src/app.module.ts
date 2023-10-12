@@ -13,6 +13,7 @@ import { MailModule } from './mail/mail.module';
 import { mailerOpt } from './common/constant/mailer-opt-const';
 import { ApiConsumerModule } from './api-consumer/api-consumer.module';
 import { FestivalModule } from './festival/festival.module';
+import { ApiConsumerService } from './api-consumer/api-consumer.service';
 
 @Module({
   imports: [
@@ -43,6 +44,10 @@ import { FestivalModule } from './festival/festival.module';
   providers: [],
 })
 export class AppModule implements NestModule {
+  constructor(private readonly apiConsumerSrv : ApiConsumerService){
+    this.apiConsumerSrv.getFestivals();
+  }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('');
   }
