@@ -1,6 +1,8 @@
 /* eslint-disable */
 export default async () => {
     const t = {
+        ["./festival/entities/ref-festival-category.entity"]: await import("./festival/entities/ref-festival-category.entity"),
+        ["./festival/entities/ref-festival-subcategory.entity"]: await import("./festival/entities/ref-festival-subcategory.entity"),
         ["./user/dto/out/user-get.dto"]: await import("./user/dto/out/user-get.dto"),
         ["./authentication/dto/out/access-token.dto"]: await import("./authentication/dto/out/access-token.dto"),
         ["./festival/dto/out/festival-get.dto"]: await import("./festival/dto/out/festival-get.dto")

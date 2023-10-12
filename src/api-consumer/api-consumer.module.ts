@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 
 import { ApiConsumerService } from './api-consumer.service';
+import { FestivalModule } from '../festival/festival.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ApiConsumerService } from './api-consumer.service';
         maxRedirects: process.env.EXTERNAL_API_MAX_REDIRECT ? +process.env.EXTERNAL_API_MAX_REDIRECT : 5,
       }),
     }),
+    FestivalModule
   ],
   providers: [ApiConsumerService],
   exports: [ApiConsumerService],
