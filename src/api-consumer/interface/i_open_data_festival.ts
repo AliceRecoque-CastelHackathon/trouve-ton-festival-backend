@@ -1,4 +1,3 @@
-const { Interface } = require(readline)
 
 export interface i_open_data_festival {
 

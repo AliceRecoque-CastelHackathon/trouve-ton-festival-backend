@@ -23,7 +23,25 @@ export class ApiConsumerService {
    * @param offset point de départ de la liste 
    * @returns 
    */
-  async getFestivals(offset: number = 0):Promise<any>{
-     return (await this.httpService.axiosRef.get(`this.baseUrl?limit=${this.fetch_size}&offset=${offset}`)).data;
+  async getFestivals(offset: number = 0){
+    const festivals_counts = 0;
+    
+    do{
+      try {
+        const response = await this.httpService.axiosRef.get(`this.baseUrl?limit=${this.fetch_size}&offset=${offset}`);
+        
+      } catch (error) {
+        
+      }
+      if (festivals_counts== 0){
+        try {
+          //festivals_counts = response.data.
+        } catch (error) {
+          
+        }
+      }
+
+    }while (offset < festivals_counts- this.fetch_size);
+
   }
 }
