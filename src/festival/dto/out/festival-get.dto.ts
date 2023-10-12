@@ -4,8 +4,8 @@ import { FestivalSubCategoryEntity } from "src/festival/entities/ref-festival-su
 
 interface IFestivalGetDto {
   id: number;
-  category: FestivalCategoryEntity;
-  subCategory: FestivalSubCategoryEntity[];
+  category: FestivalCategoryEntity|null;
+  subCategory: FestivalSubCategoryEntity[]|null;
   region: string;
   department: string;
   zipcode: number;
@@ -20,8 +20,8 @@ interface IFestivalGetDto {
 
 export class FestivalGetDto {
   id: number;
-  category: FestivalCategoryEntity;
-  subCategory: FestivalSubCategoryEntity[];
+  category: FestivalCategoryEntity|null;
+  subCategory: FestivalSubCategoryEntity[]|null;
   region: string;
   department: string;
   zipcode: number;

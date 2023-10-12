@@ -19,7 +19,7 @@ export interface I_open_data_festival {
     adresse_e_mail: string,
     decennie_de_creation_du_festival: string|null,
     annee_de_creation_du_festival: string,
-    discipline_dominante: string|null,
+    discipline_dominante: string,
     sous_categorie_spectacle_vivant: string | null,
     sous_categorie_musique: null | string,
     sous_categorie_musique_cnm: null | string,
