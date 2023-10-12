@@ -86,7 +86,7 @@ export class FestivalService {
       festival.email = element.adresse_e_mail;
       festival.website = element.site_internet_du_festival;
       festival.category = await this.getOrCreateCategory(element.discipline_dominante);
-
+      festival.subCategory = [];
       element.sous_categorie_arts_visuels_et_arts_numeriques ?
         festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
       element.sous_categorie_cinema_et_audiovisuel ?
