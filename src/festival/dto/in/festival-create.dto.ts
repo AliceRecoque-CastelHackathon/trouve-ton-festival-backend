@@ -19,8 +19,7 @@ export class FestivalCreateDto {
   department: string;
 
   @IsNumber()
-  @Min(4)
-  @Max(6)
+  @Length(4,6)
   zipcode: number;
 
   @IsString()
