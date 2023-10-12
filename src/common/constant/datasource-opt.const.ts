@@ -1,6 +1,9 @@
+
+import { FestivalCategoryEntity } from '../../festival/entities/ref-festival-category.entity';
 import { FestivalEntity } from '../../festival/entities/festival.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 import { NodeEnvEnum } from './enums/node-env.enum';
+import { FestivalSubCategoryEntity } from '../../festival/entities/ref-festival-subcategory.entity';
 
 const migrationsArray =
   process.env.TYPEORM_USE_CLI === 'true'
@@ -19,5 +22,5 @@ export const dataSourceOpt = {
   debug: false,
   migrations: migrationsArray,
   migrationsTableName: 'migrations_history',
-  entities: [UserEntity, FestivalEntity],
+  entities: [UserEntity, FestivalEntity, FestivalCategoryEntity, FestivalSubCategoryEntity],
 };

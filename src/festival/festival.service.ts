@@ -68,15 +68,17 @@ export class FestivalService {
           if(response!=null)
           festival= response;
         });
-        festival.address = element.adresse_postale;
-        //festival.creationDate = element.annee_de_creation_du_festival;
-        festival.department = element.departement_principal_de_deroulement;
-        festival.email = element.adresse_e_mail;
         festival.externalId = element.identifiant;
+        festival.name = element.nom_du_festival;
+        //festival.creationDate = element.annee_de_creation_du_festival;
+        festival.region = element.region_principale_de_deroulement;
+        festival.department = element.departement_principal_de_deroulement;
+        festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
+        festival.address = element.adresse_postale;
         festival.geoPosX = element.geocodage_xy.lon;
         festival.geoPosY = element.geocodage_xy.lat;
-        festival.name = element.nom_du_festival;
-
+        festival.email = element.adresse_e_mail;
+        festival.website = element.site_internet_du_festival;
       });
     }
 

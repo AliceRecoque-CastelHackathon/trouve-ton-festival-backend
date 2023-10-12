@@ -7,6 +7,7 @@ import { FestivalEntity } from './entities/festival.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([FestivalEntity])],
   controllers: [FestivalController],
-  providers: [FestivalService]
+  providers: [FestivalService],
+  exports: [FestivalService]
 })
 export class FestivalModule {}

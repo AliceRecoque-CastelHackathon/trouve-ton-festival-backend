@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
-import { FestivalCategoryEntity } from './ref-festival-category.entity copy';
+import { FestivalCategoryEntity } from './ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './ref-festival-subcategory.entity';
 
 @Entity({
@@ -12,14 +12,12 @@ export class FestivalEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'id_category' })
-  @ManyToOne(()=> FestivalCategoryEntity)
-  idCategory: number;
+   @ManyToOne(()=>FestivalCategoryEntity)
+  category: FestivalCategoryEntity;
 
-  @Column({ name: 'id_sub_category' })
   @ManyToMany(()=>FestivalSubCategoryEntity)
   @JoinTable({name : 'J_estival_subcategory'})
-  idSubCategory: number[];
+  subCategory: FestivalSubCategoryEntity[];
 
   @Column({ type: 'varchar', length: 100 })
   region: string;
