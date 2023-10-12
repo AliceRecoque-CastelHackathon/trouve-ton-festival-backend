@@ -4,6 +4,7 @@ import { FestivalEntity } from './entities/festival.entity';
 import { Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+import { FestivalCreateDto } from './dto/in/festival-create.dto';
 
 @Injectable()
 export class FestivalService {
@@ -50,4 +51,9 @@ export class FestivalService {
     return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
   }
 
+  async create(festivalCreateDto: FestivalCreateDto): Promise<FestivalGetDto> {
+    const newFestival: FestivalEntity = this.festivalsRepository.create(festivalCreateDto);
+    await this.festivalsRepository.save(newFestival);
+    return new FestivalGetDto(newFestival);
+  }
 }
