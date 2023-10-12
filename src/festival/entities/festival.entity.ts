@@ -13,7 +13,7 @@ export class FestivalEntity {
   id: number;
 
    @ManyToOne(()=>FestivalCategoryEntity)
-  category: FestivalCategoryEntity|null;
+  category: FestivalCategoryEntity;
 
   @ManyToMany(()=>FestivalSubCategoryEntity)
   @JoinTable({name : 'j_festival_subcategory'})
@@ -31,13 +31,13 @@ export class FestivalEntity {
   @Column({ type: 'int' })
   zipcode: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar',nullable:true })
   address: string|null;
 
   @Column({ type: 'varchar', nullable: true })
   website: string | null;
 
-  @Column({ type: 'varchar', length: '64' })
+  @Column({ type: 'varchar', length: '64',nullable:true })
   email: string;
 
   @Column({ name: 'creation_date', type: 'varchar', length: 4, nullable: true })
