@@ -12,7 +12,7 @@ export class FestivalService {
     private festivalsRepository: Repository<FestivalEntity>,
   ) { }
 
-  async getAll(festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+  async getMany(festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
     let selectOpt: any = undefined;
     if (festivalAnyDto.categoryId) {
       selectOpt = {idCategory : festivalAnyDto.categoryId};

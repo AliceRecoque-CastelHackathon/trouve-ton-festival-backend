@@ -16,9 +16,9 @@ export class FestivalController {
     description: 'A list of festival',
     type: [FestivalGetDto],
   })
-  @Post('many')
-  async findAll(@Body() festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
-    return await this.festivalService.getAll(festivalAnyDto);
+  @Post('getMany')
+  async findMany(@Body() festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+    return await this.festivalService.getMany(festivalAnyDto);
   }
 
   @ApiResponse({
