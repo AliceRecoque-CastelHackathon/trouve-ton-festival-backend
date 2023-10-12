@@ -12,6 +12,7 @@ import { dataSourceOpt } from './common/constant/datasource-opt.const';
 import { MailModule } from './mail/mail.module';
 import { mailerOpt } from './common/constant/mailer-opt-const';
 import { ApiConsumerModule } from './api-consumer/api-consumer.module';
+import { FestivalModule } from './festival/festival.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ApiConsumerModule } from './api-consumer/api-consumer.module';
     AuthenticationModule,
     MailModule,
     ApiConsumerModule,
+    FestivalModule,
   ],
   controllers: [],
   providers: [],
