@@ -43,8 +43,8 @@ export class FestivalUpdateDto {
   geoPosY: number;
 
   @IsDate()
-  dateStart: Date;
+  dateStart: string;
 
   @IsDate()
-  dateEnd: Date;
+  dateEnd: string;
 }
