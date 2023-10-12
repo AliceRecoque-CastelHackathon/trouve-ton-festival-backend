@@ -24,7 +24,7 @@ export class FestivalUpdateDto {
 
   @IsNumber()
   @IsPostalCode()
-  zipcode: number;
+  zipcode: string;
 
   @IsString()
   @MinLength(10)

@@ -9,7 +9,7 @@ interface IFestivalGetDto {
   name: string;
   region: string;
   department: string;
-  zipcode: number;
+  zipcode: string;
   address: string;
   website?: string | null;
   email: string;
@@ -26,7 +26,7 @@ export class FestivalGetDto {
   name: string;
   region: string;
   department: string;
-  zipcode: number;
+  zipcode: string;
   address: string;
   website?: string | null;
   email: string;

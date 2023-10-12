@@ -28,8 +28,8 @@ export class FestivalEntity {
   @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'int' })
-  zipcode: number;
+  @Column({ type: 'varchar', length: 5 })
+  zipcode: string;
 
   @Column({ type: 'varchar' })
   address: string;

@@ -80,7 +80,7 @@ export class FestivalService {
       //festival.creationDate = element.annee_de_creation_du_festival;
       festival.region = element.region_principale_de_deroulement;
       festival.department = element.departement_principal_de_deroulement;
-      festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
+      festival.zipcode = element.code_postal_de_la_commune_principale_de_deroulement;
       festival.address = element.adresse_postale;
       festival.geoPosX = element.geocodage_xy.lon;
       festival.geoPosY = element.geocodage_xy.lat;
