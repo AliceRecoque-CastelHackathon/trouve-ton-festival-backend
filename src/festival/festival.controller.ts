@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
@@ -25,10 +25,19 @@ export class FestivalController {
     description: 'A list of festival',
     type: [FestivalGetDto],
   })
-  @Get('all')
+  @Get('many')
   async findAll(@Req() req: Request): Promise<FestivalGetDto[]> {
     const limit: number = req.query.limit ? parseInt(req.query.limit.toString()) : 10
     const offset: number = req.query.offset ? parseInt(req.query.offset.toString()) : 0
-    return this.festivalService.getAll(limit, offset);
+    return await this.festivalService.getAll(limit, offset);
+  }
+
+  @ApiResponse({
+    description: 'A list of festival',
+    type: [FestivalGetDto],
+  })
+  @Get('/byId/:id')
+  async findById(@Param('id', ParseIntPipe) festivalId: number,): Promise<FestivalGetDto | null> {
+    return await this.festivalService.getById(festivalId);
   }
 }

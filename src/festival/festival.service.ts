@@ -12,17 +12,25 @@ export class FestivalService {
   ) { }
 
   async getAll(limit: number, offset: number): Promise<FestivalGetDto[]> {
-    const entities: FestivalEntity[] = await this.festivalsRepository.find({
+    const festivalEntity: FestivalEntity[] = await this.festivalsRepository.find({
       skip: offset,
       take: limit
     });
     const results: FestivalGetDto[] = [];
 
-    entities.forEach(async (festivalEntity: FestivalEntity) => {
+    festivalEntity.forEach(async (festivalEntity: FestivalEntity) => {
       results.push(new FestivalGetDto(festivalEntity));
     });
 
     return results;
+  }
+
+  async getById(festivalId: number): Promise<FestivalGetDto | null> {
+    const festivalEntity: FestivalEntity | null = await this.festivalsRepository.findOneBy({
+      id: festivalId
+    });
+
+    return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
   }
 
 }
