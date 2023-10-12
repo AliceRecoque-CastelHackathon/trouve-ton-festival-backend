@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalService } from './festival.service';
-import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+import { FestivalGetManyDto } from './dto/in/festival-get-many.dto';
 import { AllowAnonymous } from '../common/decorator/allow-anonymous.decorator';
 import { FestivalCreateDto } from './dto/in/festival-create.dto';
 
@@ -17,8 +17,9 @@ export class FestivalController {
     description: 'A list of festival',
     type: [FestivalGetDto],
   })
+  @HttpCode(HttpStatus.OK)
   @Post('getMany')
-  async findMany(@Body() festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+  async findMany(@Body() festivalAnyDto: FestivalGetManyDto): Promise<FestivalGetDto[]> {
     return await this.festivalService.getMany(festivalAnyDto);
   }
 

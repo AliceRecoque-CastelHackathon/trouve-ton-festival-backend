@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FestivalEntity } from './entities/festival.entity';
 import { Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
-import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+import { FestivalGetManyDto } from './dto/in/festival-get-many.dto';
 import { FestivalCreateDto } from './dto/in/festival-create.dto';
 
 @Injectable()
@@ -13,17 +13,17 @@ export class FestivalService {
     private festivalsRepository: Repository<FestivalEntity>,
   ) { }
 
-  async getMany(festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
-    let selectOpt: any = undefined;
+  async getMany(festivalAnyDto: FestivalGetManyDto): Promise<FestivalGetDto[]> {
+    let whereOpt: any = undefined;
     if (festivalAnyDto.categoryId) {
-      selectOpt = {idCategory : festivalAnyDto.categoryId};
+      whereOpt = {idCategory : festivalAnyDto.categoryId};
     }
     if (festivalAnyDto.region) {
-      if (!selectOpt) {
-        selectOpt = {region : festivalAnyDto.region};
+      if (!whereOpt) {
+        whereOpt = {region : festivalAnyDto.region};
       }
       else {
-        selectOpt.region = festivalAnyDto.region;
+        whereOpt.region = festivalAnyDto.region;
       }
     }
 
@@ -31,7 +31,7 @@ export class FestivalService {
       {
         skip: festivalAnyDto.offset ?? 0,
         take: festivalAnyDto.limit ?? 10,
-        ...(selectOpt ? {select: selectOpt} : {})
+        ...(whereOpt ? {where: whereOpt} : {})
       }
     );
     const results: FestivalGetDto[] = [];

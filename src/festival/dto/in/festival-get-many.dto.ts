@@ -1,6 +1,6 @@
 import { IsEmail, IsOptional, IsPositive } from 'class-validator';
 
-export class FestivalGetAnyDto {
+export class FestivalGetManyDto {
   @IsOptional()
   @IsPositive()
   limit?: number;
