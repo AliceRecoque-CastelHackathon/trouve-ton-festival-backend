@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FestivalEntity } from './entities/festival.entity';
 import { Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
+import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
 
 @Injectable()
 export class FestivalService {
@@ -11,11 +12,27 @@ export class FestivalService {
     private festivalsRepository: Repository<FestivalEntity>,
   ) { }
 
-  async getAll(limit: number, offset: number): Promise<FestivalGetDto[]> {
-    const festivalEntity: FestivalEntity[] = await this.festivalsRepository.find({
-      skip: offset,
-      take: limit
-    });
+  async getAll(festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+    let selectOpt: any = undefined;
+    if (festivalAnyDto.categoryId) {
+      selectOpt = {idCategory : festivalAnyDto.categoryId};
+    }
+    if (festivalAnyDto.region) {
+      if (!selectOpt) {
+        selectOpt = {region : festivalAnyDto.region};
+      }
+      else {
+        selectOpt.region = festivalAnyDto.region;
+      }
+    }
+
+    const festivalEntity: FestivalEntity[] = await this.festivalsRepository.find(
+      {
+        skip: festivalAnyDto.offset ?? 0,
+        take: festivalAnyDto.limit ?? 10,
+        ...(selectOpt ? {select: selectOpt} : {})
+      }
+    );
     const results: FestivalGetDto[] = [];
 
     festivalEntity.forEach(async (festivalEntity: FestivalEntity) => {

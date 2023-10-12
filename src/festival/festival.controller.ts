@@ -1,9 +1,10 @@
-import { Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalService } from './festival.service';
+import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
 
 @ApiBearerAuth()
 @ApiTags('festival')
@@ -11,25 +12,13 @@ import { FestivalService } from './festival.service';
 export class FestivalController {
   constructor(private readonly festivalService: FestivalService) {}
 
-  @ApiQuery({
-    name: 'limit',
-    style: 'simple',
-    required: false
-  })
-  @ApiQuery({
-    name: 'offset',
-    style: 'simple',
-    required: false
-  })
   @ApiResponse({
     description: 'A list of festival',
     type: [FestivalGetDto],
   })
   @Get('many')
-  async findAll(@Req() req: Request): Promise<FestivalGetDto[]> {
-    const limit: number = req.query.limit ? parseInt(req.query.limit.toString()) : 10
-    const offset: number = req.query.offset ? parseInt(req.query.offset.toString()) : 0
-    return await this.festivalService.getAll(limit, offset);
+  async findAll(@Body() festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
+    return await this.festivalService.getAll(festivalAnyDto);
   }
 
   @ApiResponse({
