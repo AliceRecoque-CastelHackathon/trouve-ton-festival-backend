@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { FestivalEntity } from 'src/festival/entities/festival.entity';
-import { i_open_data_festival_response } from './interface/i_open_data_festival_response';
+import { I_open_data_festival_response } from './interface/i_open_data_festival_response';
 import { throws } from 'assert';
 import { json } from 'stream/consumers';
 import { FestivalService } from 'src/festival/festival.service';
@@ -37,6 +37,7 @@ export class ApiConsumerService {
         if (festivals_counts== 0){
           festivals_counts = responseObject["total_count"];
         }
+        this.festivalService.populateFestivals(responseObject);
         //@TODO appel de festival service pour lui passer la liste à enregistrer
 
       } catch (error) {

@@ -1,5 +1,5 @@
 
-export interface i_open_data_festival {
+export interface I_open_data_festival {
 
     nom_du_festival: string,
     envergure_territoriale: string,
@@ -10,15 +10,15 @@ export interface i_open_data_festival {
     code_insee_commune: string,
     code_insee_epci_collage_en_valeur: string,
     libelle_epci_collage_en_valeur: string,
-    numero_de_voie: string|null,
-    type_de_voie_rue_avenue_boulevard_etc: string|null,
-    nom_de_la_voie: string|null,
-    adresse_postale: string|null,
+    numero_de_voie: string,
+    type_de_voie_rue_avenue_boulevard_etc: string,
+    nom_de_la_voie: string,
+    adresse_postale: string,
     complement_d_adresse_facultatif: string|null,
     site_internet_du_festival: string|null,
-    adresse_e_mail: string|null,
+    adresse_e_mail: string,
     decennie_de_creation_du_festival: string|null,
-    annee_de_creation_du_festival: string|null,
+    annee_de_creation_du_festival: string,
     discipline_dominante: string|null,
     sous_categorie_spectacle_vivant: string | null,
     sous_categorie_musique: null | string,
@@ -29,7 +29,7 @@ export interface i_open_data_festival {
     periode_principale_de_deroulement_du_festival: null | string,
     identifiant_agence_a: null | string,
     identifiant: string,
-    geocodage_xy: null | {
+    geocodage_xy:  {
         lon: number,
         lat: number
     }

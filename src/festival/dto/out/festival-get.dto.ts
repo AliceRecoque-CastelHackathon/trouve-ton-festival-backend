@@ -1,11 +1,13 @@
+import { I_open_data_festival } from "src/api-consumer/interface/i_open_data_festival";
+
 interface IFestivalGetDto {
   id: number;
   idCategory: number;
-  idSubCategory: number;
+  idSubCategory: number[];
   region: string;
   department: string;
   zipcode: number;
-  adress: string;
+  address: string;
   website?: string | null;
   email: string;
   creationDate?: Date | null;
@@ -17,11 +19,11 @@ interface IFestivalGetDto {
 export class FestivalGetDto {
   id: number;
   idCategory: number;
-  idSubCategory: number;
+  idSubCategory: number[];
   region: string;
   department: string;
   zipcode: number;
-  adress: string;
+  address: string;
   website?: string | null;
   email: string;
   creationDate?: Date | null;
@@ -37,13 +39,30 @@ export class FestivalGetDto {
       this.region = data['region'];
       this.department = data['department'];
       this.zipcode = data['zipcode'];
-      this.adress = data['adress'];
+      this.address = data['address'];
       this.website = data['website'];
       this.email = data['email'];
       this.creationDate = data['creationDate'];
       this.geoPosX = data['geoPosX'];
       this.geoPosY = data['geoPosY'];
       this.externalId = data['externalId'];
+    }
+  }
+
+  inifFromOpenData(data?:I_open_data_festival ){
+    if (data) {
+      // this.idCategory = data.,
+      // this.idSubCategory = data
+      // this.region = data
+      // this.department = data
+      // this.zipcode = data
+      // this.adress = data
+      // this.website = data
+      // this.email = data
+      // this.creationDate = data
+      // this.geoPosX = data
+      // this.geoPosY = data
+      // this.externalId = data
     }
   }
 }
