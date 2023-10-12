@@ -6,6 +6,7 @@ interface IFestivalGetDto {
   id: number;
   category: FestivalCategoryEntity|null;
   subCategory: FestivalSubCategoryEntity[]|null;
+  name: string;
   region: string;
   department: string;
   zipcode: number;
@@ -22,6 +23,7 @@ export class FestivalGetDto {
   id: number;
   category: FestivalCategoryEntity|null;
   subCategory: FestivalSubCategoryEntity[]|null;
+  name: string;
   region: string;
   department: string;
   zipcode: number;
@@ -38,16 +40,17 @@ export class FestivalGetDto {
       this.id = data.id;
       this.category = data.category
       this.subCategory = data.subCategory;
-      this.region = data['region'];
-      this.department = data['department'];
-      this.zipcode = data['zipcode'];
-      this.address = data['address'];
-      this.website = data['website'];
-      this.email = data['email'];
-      this.creationDate = data['creationDate'];
-      this.geoPosX = data['geoPosX'];
-      this.geoPosY = data['geoPosY'];
-      this.externalId = data['externalId'];
+      this.name = data.name
+      this.region = data.region;
+      this.department = data.department;
+      this.zipcode = data.zipcode;
+      this.address = data.address;
+      this.website = data.website;
+      this.email = data.email;
+      this.creationDate = data.creationDate;
+      this.geoPosX = data.geoPosX;
+      this.geoPosY = data.geoPosY;
+      this.externalId = data.externalId;
     }
   }
 

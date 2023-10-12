@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, MinLength } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Min, MinLength } from "class-validator";
 
 export class FestivalUpdateDto {
   @IsNumber()
@@ -11,6 +11,10 @@ export class FestivalUpdateDto {
 
   @IsNumber(undefined, {each: true})
   idSubCategory: number[];
+
+  @IsString()
+  @Min(5)
+  name: string;
 
   @IsString()
   region: string;
