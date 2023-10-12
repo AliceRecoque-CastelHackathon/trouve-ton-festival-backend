@@ -12,10 +12,10 @@ export class FestivalEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(()=>FestivalCategoryEntity)
+  @ManyToOne(()=>FestivalCategoryEntity, { eager: true })
   category: FestivalCategoryEntity|null;
 
-  @ManyToMany(()=>FestivalSubCategoryEntity)
+  @ManyToMany(()=>FestivalSubCategoryEntity, { eager: true })
   @JoinTable({name : 'j_festival_subcategory'})
   subCategory: FestivalSubCategoryEntity[]|null;
 
