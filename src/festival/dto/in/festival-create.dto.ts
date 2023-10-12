@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Min, MinLength } from "class-validator";
+import { IsArray, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Max, Min, MinLength } from "class-validator";
 
 export class FestivalCreateDto {
   @IsNumber()
@@ -19,7 +19,8 @@ export class FestivalCreateDto {
   department: string;
 
   @IsNumber()
-  @Length(5, 5)
+  @Min(5)
+  @Max(5)
   zipcode: number;
 
   @IsString()
