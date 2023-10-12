@@ -1,9 +1,11 @@
 import { I_open_data_festival } from "src/api-consumer/interface/i_open_data_festival";
+import { FestivalCategoryEntity } from "src/festival/entities/ref-festival-category.entity";
+import { FestivalSubCategoryEntity } from "src/festival/entities/ref-festival-subcategory.entity";
 
 interface IFestivalGetDto {
   id: number;
-  idCategory: number;
-  idSubCategory: number[];
+  category: number;
+  subCategory: number[];
   region: string;
   department: string;
   zipcode: number;
@@ -34,8 +36,8 @@ export class FestivalGetDto {
   constructor(data?: IFestivalGetDto) {
     if (data) {
       this.id = data['id'];
-      this.idCategory = data['idCategory'];
-      this.idSubCategory = data['idSubCategory'];
+      this.idCategory = data.category;
+      this.idSubCategory = data.subCategory;
       this.region = data['region'];
       this.department = data['department'];
       this.zipcode = data['zipcode'];
