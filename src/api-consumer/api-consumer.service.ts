@@ -1,11 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { join } from 'path';
-import { FestivalEntity } from 'src/festival/entities/festival.entity';
 import { I_open_data_festival_response } from './interface/i_open_data_festival_response';
 import { throws } from 'assert';
 import { json } from 'stream/consumers';
-import { FestivalService } from 'src/festival/festival.service';
+import { FestivalService } from '../festival/festival.service';
+import { FestivalEntity } from '../festival/entities/festival.entity';
 
 @Injectable()
 export class ApiConsumerService {
@@ -23,13 +23,13 @@ export class ApiConsumerService {
   /**
    * retourne un json de festival
    * ils ne les retourne que par un maximul de 100 à chaque fois
-   * le paramètre offset permet de définir le point de départ de la liste 
-   * @param offset point de départ de la liste 
-   * @returns 
+   * le paramètre offset permet de définir le point de départ de la liste
+   * @param offset point de départ de la liste
+   * @returns
    */
   async getFestivals(offset: number = 0){
     let festivals_counts:number = 0;
-    
+
     do{
       try {
         const response = await this.httpService.axiosRef.get(`this.baseUrl?limit=${this.fetch_size}&offset=${offset}`);
