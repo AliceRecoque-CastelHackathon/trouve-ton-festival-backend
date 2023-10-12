@@ -1,13 +1,13 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalService } from './festival.service';
 import { FestivalGetAnyDto } from './dto/in/festival-get-any.dto';
+import { AllowAnonymous } from '../common/decorator/allow-anonymous.decorator';
 
-@ApiBearerAuth()
 @ApiTags('festival')
+@AllowAnonymous()
 @Controller('festival')
 export class FestivalController {
   constructor(private readonly festivalService: FestivalService) {}
@@ -16,7 +16,7 @@ export class FestivalController {
     description: 'A list of festival',
     type: [FestivalGetDto],
   })
-  @Get('many')
+  @Post('many')
   async findAll(@Body() festivalAnyDto: FestivalGetAnyDto): Promise<FestivalGetDto[]> {
     return await this.festivalService.getAll(festivalAnyDto);
   }

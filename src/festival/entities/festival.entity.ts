@@ -39,8 +39,8 @@ export class FestivalEntity {
   @Column({ type: 'varchar', length: '64' })
   email: string;
 
-  @Column({ name: 'creation_date', type: 'date', nullable: true })
-  creationDate: Date | null;
+  @Column({ name: 'creation_date', type: 'varchar', length: 4, nullable: true })
+  creationDate: string | null;
 
   @Column({ name: 'geo_pos_x', type: 'float', nullable: true })
   geoPosX: number | null;
