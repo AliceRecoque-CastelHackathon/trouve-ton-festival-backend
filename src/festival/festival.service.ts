@@ -86,7 +86,8 @@ export class FestivalService {
       festival.geoPosY = element.geocodage_xy.lat;
       festival.email = element.adresse_e_mail;
       festival.website = element.site_internet_du_festival;
-      festival.category = await this.getOrCreateCategory(element.discipline_dominante);
+      element.discipline_dominante?
+      (festival.category = await this.getOrCreateCategory(element.discipline_dominante)):null;
       festival.subCategory = [];
       element.sous_categorie_arts_visuels_et_arts_numeriques ?
         festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
@@ -110,7 +111,7 @@ export class FestivalService {
    * @param name 
    * @returns 
    */
-  private async getOrCreateCategory(name: string | null): Promise<FestivalSubCategoryEntity | null> {
+  private async getOrCreateCategory(name: string | null): Promise<FestivalCategoryEntity | null> {
     if (name == null) {
       return null;
     }
@@ -130,7 +131,7 @@ export class FestivalService {
    * @returns 
    */
   private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
-    let category = await this.subcategoryRepository.findOneBy({
+    let category = await this.subCategoryRepository.findOneBy({
       label: name
     })
     if (!category) {
