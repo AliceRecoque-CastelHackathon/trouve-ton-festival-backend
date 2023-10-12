@@ -13,11 +13,11 @@ export class FestivalEntity {
   id: number;
 
    @ManyToOne(()=>FestivalCategoryEntity)
-  category: FestivalCategoryEntity;
+  category: FestivalCategoryEntity|null;
 
   @ManyToMany(()=>FestivalSubCategoryEntity)
-  @JoinTable({name : 'J_estival_subcategory'})
-  subCategory: FestivalSubCategoryEntity[];
+  @JoinTable({name : 'J_festival_subcategory'})
+  subCategory: FestivalSubCategoryEntity[]|null;
 
   @Column({ type: 'varchar', length: 100 })
   region: string;
