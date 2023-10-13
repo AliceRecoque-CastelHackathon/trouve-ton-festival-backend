@@ -11,12 +11,16 @@ import { UserGetDto } from './dto/out/user-get.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserAuthDto } from './dto/protected/user-auth.dto';
 import { UserUpdateDto } from './dto/in/user-update.dto';
+import { JwtModule } from '@nestjs/jwt';
+import { FestivalEntity } from '../festival/entities/festival.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    @InjectRepository(FestivalEntity)
+    private festivalRepository: Repository<FestivalEntity>,
   ) { }
 
   async getAll(): Promise<UserGetDto[]> {
@@ -133,5 +137,50 @@ export class UserService {
       email: userEmail,
     });
     return userEntity ? new UserAuthDto(userEntity) : null;
+  }
+/**
+ * ajoute un favoris à l'utilisateur
+ * @param userId 
+ * @param festivalId 
+ * @returns 
+ */
+  async addFestivalFavorite(userId: number, festivalId: number):Promise<UserGetDto> {
+    let user: UserEntity | null;
+    let festival: FestivalEntity | null;
+
+    user = await this.usersRepository.findOneBy({
+      id: userId
+    })
+    if (!user) throw new BadRequestException("utilisateur non connecté");
+    festival = await this.festivalRepository.findOneBy({
+      id: festivalId
+    })
+    if (!festival) throw new BadRequestException("festival non trouvé ou invalide");
+    if (!user.festivalFovorites) user.festivalFovorites = [];
+    user.festivalFovorites.push(festival);
+    return this.usersRepository.save(user)
+      .then(response=> new UserGetDto(response));
+  }
+  
+  /**
+   *  retire le festival dont l'identifiant est passé en paramètre 
+   * de la liste de favoris de l'utilisateur dont l'id est passé en paramètres
+   * @param userId 
+   * @param festivalId 
+   * @returns 
+   */
+  async removeFestivalFavorite(userId: number, festivalId: number):Promise<UserGetDto> {
+    let user: UserEntity | null;
+    let festival: FestivalEntity;
+
+    user = await this.usersRepository.findOneBy({
+      id: userId
+    })
+    if (!user) throw new BadRequestException("utilisateur non connecté");
+    // erreur si liste vide
+    if (!user.festivalFovorites || user.festivalFovorites.length == 0) throw new BadRequestException("aucun festival en favory");
+    user.festivalFovorites = user.festivalFovorites.filter((e) => { e.id != festivalId });
+    return this.usersRepository.save(user)
+      .then(response=> new UserGetDto(response));
   }
 }

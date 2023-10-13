@@ -31,7 +31,7 @@ import { multerImgOpt } from '../common/constant/multer-opt.const';
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @ApiResponse({
     description: 'A list of all users',
@@ -105,5 +105,36 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<UserGetDto> {
     return await this.userService.updateUserAvatarUrl(file.path, req.user.userId);
+  }
+
+  /**
+   * 
+   * @param req 
+   * @param festivalId 
+   * @returns UserGetDto 
+   */
+
+  @HttpCode(HttpStatus.OK)
+  @Post('/addfestival/:id')
+  async addFestivalFavorite(
+    @Req() req: any,
+    @Param('id', ParseIntPipe) festivalId: number,
+  ): Promise<UserGetDto> {
+    return await this.userService.addFestivalFavorite(req.user.userId, festivalId);
+  }
+
+  /**
+   * 
+   * @param req 
+   * @param festivalId 
+   * @returns UserGetDto
+   */
+  @HttpCode(HttpStatus.OK)
+  @Post('/removefestival/:id')
+  async removeFestivalFavorite(
+    @Req() req: any,
+    @Param('id', ParseIntPipe) festivalId: number,
+  ): Promise<UserGetDto> {
+    return await this.userService.addFestivalFavorite(req.user.userId, festivalId);
   }
 }

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { FestivalEntity } from '../../festival/entities/festival.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity({
   name: 'user',
@@ -30,4 +31,10 @@ export class UserEntity {
 
   @Column({ name: 'reset_password_token', type: 'varchar', nullable: true })
   resetPwdToken: string | null;
+/**
+ * festival favoris de l'utilisateur
+ */
+   @ManyToMany(()=>FestivalEntity,{eager:true})
+  @JoinTable({name: 'j_user_festival_favorites'})
+  festivalFovorites: FestivalEntity[];
 }
