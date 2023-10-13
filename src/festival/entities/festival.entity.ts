@@ -49,10 +49,10 @@ export class FestivalEntity {
   @Column({ name: 'date_end', type: 'date' })
   dateEnd: Date;
 
-  @Column({ name: 'geo_pos_x', type: 'float', nullable: true })
+  @Column({ name: 'geo_pos_x', type: 'float' })
   geoPosX: number;
 
-  @Column({ name: 'geo_pos_y', type: 'float', nullable: true })
+  @Column({ name: 'geo_pos_y', type: 'float' })
   geoPosY: number;
 
   @Column({ name: 'external_id', type: 'varchar', length: '30', nullable: true })
