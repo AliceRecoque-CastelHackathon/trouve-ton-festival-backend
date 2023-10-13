@@ -19,6 +19,7 @@ interface IFestivalGetDto {
   externalId?: string | null;
   dateStart: Date;
   dateEnd: Date;
+  period: string |null;
 }
 
 export class FestivalGetDto {
@@ -36,8 +37,9 @@ export class FestivalGetDto {
   geoPosX: number;
   geoPosY: number;
   externalId?: string | null;
-  dateStart: Date;
-  dateEnd: Date;
+  dateStart: Date|null;
+  dateEnd: Date|null;
+  period: string|null;
 
   constructor(data?: IFestivalGetDto) {
     if (data) {
@@ -57,6 +59,7 @@ export class FestivalGetDto {
       this.externalId = data.externalId;
       this.dateStart = data.dateStart;
       this.dateEnd = data.dateEnd;
+      this.period = data.period;
     }
   }
 }

@@ -86,10 +86,8 @@ export class FestivalService {
         if (!festival.name) {
           throw new Error("nom du festival non définit");
         }
-        festival.creationDate = element.annee_de_creation_du_festival;
-        if (!festival.creationDate || festival.creationDate.length > 4 ) {
-          throw new Error("date de création non définie");
-        }
+        festival.period = element.annee_de_creation_du_festival;
+       
         festival.region = element.region_principale_de_deroulement;
         if (!festival.region) {
           throw new Error("région non définie");
@@ -116,14 +114,14 @@ export class FestivalService {
         if (!element.discipline_dominante) {
           throw new Error("catégorie non définie");
         }
-        festival.dateStart = new Date();
-        if(!festival.dateStart){
-          throw new Error("date start non définie");
-        }
+        festival.period = element.periode_principale_de_deroulement_du_festival;
+        /**
+         * 
         festival.dateEnd = new Date();
         if(!festival.dateStart){
           throw new Error("date end non définie");
         }
+         */
         festival.category = await this.getOrCreateCategory(element.discipline_dominante)
 
         festival.subCategory = [];

@@ -37,16 +37,23 @@ export class FestivalEntity {
   @Column({ type: 'varchar', nullable: true })
   website: string | null;
 
-  @Column({ type: 'varchar', length: '64',nullable:true })
+  @Column({ type: 'varchar',nullable:true })
   email: string;
 
   @Column({ name: 'creation_date', type: 'varchar', length: 4, nullable: true })
   creationDate: string | null;
+  /**
+   * @TODO 
+   * séparer les date du festival pour permettre 
+   * un tri
+   */
+  @Column({ name: 'date', type: 'varchar', nullable:true })
+  period: string|null;
 
-  @Column({ name: 'date_start', type: 'date' })
+  @Column({ name: 'date_start', type: 'date' , nullable : true})
   dateStart: Date;
 
-  @Column({ name: 'date_end', type: 'date' })
+  @Column({ name: 'date_end', type: 'date' , nullable : true})
   dateEnd: Date;
 
   @Column({ name: 'geo_pos_x', type: 'float' })
