@@ -56,10 +56,17 @@ export class FestivalService {
     return results;
   }
 
-
   async getById(festivalId: number): Promise<FestivalGetDto | null> {
     const festivalEntity: FestivalEntity | null = await this.festivalsRepository.findOneBy({
       id: festivalId
+    });
+
+    return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
+  }
+
+  async getByName(festivalName: string): Promise<FestivalGetDto | null> {
+    const festivalEntity: FestivalEntity | null = await this.festivalsRepository.findOneBy({
+      name: festivalName
     });
 
     return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
