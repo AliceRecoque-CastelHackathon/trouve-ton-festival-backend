@@ -11,6 +11,7 @@ import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_fes
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
 import { FestivalUpdateDto } from './dto/in/festival-update.dto';
+import { error } from 'console';
 
 
 @Injectable()
@@ -67,7 +68,7 @@ export class FestivalService {
   async populateFestivals(data: I_open_data_festival_response) {
 
     data.results.forEach(async (element: I_open_data_festival) => {
-      let newfestival: boolean = false;
+      let inserttival: boolean = false;
       let festival: FestivalEntity = new FestivalEntity();
       await this.festivalsRepository.findOneBy({
         externalId: element.identifiant
@@ -75,37 +76,68 @@ export class FestivalService {
         if (response != null)
           festival = response;
       });
-      festival.externalId = element.identifiant;
-      festival.name = element.nom_du_festival;
-      festival.creationDate = element.annee_de_creation_du_festival;
-      festival.region = element.region_principale_de_deroulement;
-      festival.department = element.departement_principal_de_deroulement;
-      festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
-      festival.address = element.adresse_postale;
-      festival.geoPosX = element.geocodage_xy.lon;
-      festival.geoPosY = element.geocodage_xy.lat;
-      festival.email = element.adresse_e_mail;
-      festival.website = element.site_internet_du_festival;
-      element.discipline_dominante ?
-        festival.category = await this.getOrCreateCategory(element.discipline_dominante):null;
-      festival.subCategory = [];
-      element.sous_categorie_arts_visuels_et_arts_numeriques ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
-      element.sous_categorie_cinema_et_audiovisuel ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel)) : null;
-      element.sous_categorie_livre_et_litterature ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature)) : null;
-      element.sous_categorie_musique ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique)) : null;
-      element.sous_categorie_musique_cnm ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm)) : null;
-      element.sous_categorie_spectacle_vivant ?
-        festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant)) : null;
-      
+      try {
+        inserttival = false;
+        festival.externalId = element.identifiant;
+        if (!festival.externalId) {
+          throw new Error("externalId non définie");
+        }
+        festival.name = element.nom_du_festival;
+        if (!festival.name) {
+          throw new Error("nom du festival non définit");
+        }
+        festival.creationDate = element.annee_de_creation_du_festival;
+        festival.region = element.region_principale_de_deroulement;
+        if (!festival.region) {
+          throw new Error("région non définie");
+        }
+        festival.department = element.departement_principal_de_deroulement;
+        if (!festival.department) {
+          throw new Error("département non définit");
+        }
+        festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
+        if (!festival.zipcode) {
+          throw new Error("zipcode non définit");
+        }
+        festival.address = element.adresse_postale;
+        festival.geoPosX = element.geocodage_xy.lon;
+        if (!festival.geoPosX) {
+          throw new Error("geoposition longitude manquante non définie");
+        }
+        festival.geoPosY = element.geocodage_xy.lat;
+        if (!festival.geoPosY) {
+          throw new Error("geoposition latitude manquante non définie");
+        }
+        festival.email = element.adresse_e_mail;
+        festival.website = element.site_internet_du_festival;
+        if (!element.discipline_dominante) {
+          throw new Error("catégorie non définie");
+        }
+        festival.category = await this.getOrCreateCategory(element.discipline_dominante)
+
+        festival.subCategory = [];
+        element.sous_categorie_arts_visuels_et_arts_numeriques ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
+        element.sous_categorie_cinema_et_audiovisuel ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel)) : null;
+        element.sous_categorie_livre_et_litterature ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature)) : null;
+        element.sous_categorie_musique ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique)) : null;
+        element.sous_categorie_musique_cnm ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm)) : null;
+        element.sous_categorie_spectacle_vivant ?
+          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant)) : null;
+        inserttival = true;
+      } catch (error) {
+        console.log(`${festival.name} ${error}`);
+      }
+      if (inserttival) {
         this.festivalsRepository.save(festival)
-        .catch(error=> 
-          console.log(`${festival.name}  ${festival.category.label} ${error}`));
-      
+          .catch(error =>
+            console.log(`${festival.name} ${error}`));
+      }
+
 
     });
   }
@@ -115,21 +147,21 @@ export class FestivalService {
    * @returns 
    */
   private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
-    let response : FestivalCategoryEntity = new FestivalCategoryEntity();
+    let response: FestivalCategoryEntity = new FestivalCategoryEntity();
     this.categoryRepository.findOneBy({
       label: name.trim()
     })
-    .then(
-       async category =>{
-          if(category== null){
+      .then(
+        async category => {
+          if (category == null) {
             response.label = name.trim();
             response = await this.categoryRepository.save(response);
           }
-          else{
+          else {
             response = category;
           }
-      }
-    )
+        }
+      )
     return response;
   }
   /**
@@ -187,7 +219,7 @@ export class FestivalService {
       await this.festivalsRepository.save(festival);
 
       return new FestivalGetDto(festival);
-    }else {
+    } else {
       throw new BadRequestException('festival to modify not found');
     }
   }
