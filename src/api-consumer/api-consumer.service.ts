@@ -40,7 +40,8 @@ export class ApiConsumerService {
           }
           this.festivalService.populateFestivals(response.data);
         });
-    } while (offset < festivals_counts - this.fetch_size);
+        offset += this.fetch_size; 
+    } while (offset < (festivals_counts - this.fetch_size));
 
     console.info(`imports terminés.`)
 
