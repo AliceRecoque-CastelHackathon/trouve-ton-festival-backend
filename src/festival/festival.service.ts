@@ -158,22 +158,18 @@ export class FestivalService {
    * @returns
    */
   private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
-    let response: FestivalCategoryEntity = new FestivalCategoryEntity();
-    this.categoryRepository.findOneBy({
-      label: name.trim()
-    })
-      .then(
-        async category => {
-          if (category == null) {
-            response.label = name.trim();
-            response = await this.categoryRepository.save(response);
-          }
-          else {
-            response = category;
-          }
-        }
-      )
-    return response;
+    let response: FestivalCategoryEntity | null = await this.categoryRepository.findOneBy({
+      label: name.trim().toLowerCase()
+    });
+
+    if (!response) {
+      const newCategory = new FestivalCategoryEntity();
+      newCategory.label = name.trim().toLowerCase();
+      return await this.categoryRepository.save(newCategory);
+    }
+    else {
+      return response;
+    }
   }
   /**
    *  creer ou récupére une entité catégory
@@ -182,11 +178,11 @@ export class FestivalService {
    */
   private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
     let category = await this.subCategoryRepository.findOneBy({
-      label: name.trim()
+      label: name.trim().toLowerCase()
     })
     if (!category) {
       category = new FestivalSubCategoryEntity();
-      category.label = name.trim();
+      category.label = name.trim().toLowerCase();
       category = await this.subCategoryRepository.save(category);
     }
     return category;
