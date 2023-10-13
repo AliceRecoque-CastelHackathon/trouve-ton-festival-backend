@@ -32,7 +32,7 @@ export class ApiConsumerService {
       try {
         const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url);
         festivals_counts = response.data.total_count;
-        this.festivalService.populateFestivals(response.data);
+        await this.festivalService.populateFestivals(response.data);
         offset += this.fetch_size;
         url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
       } catch (error) {

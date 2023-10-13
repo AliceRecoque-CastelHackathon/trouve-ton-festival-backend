@@ -95,7 +95,7 @@ export class FestivalService {
         if (!festival.department) {
           throw new Error("département non définit");
         }
-        festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
+        festival.zipcode = element.code_postal_de_la_commune_principale_de_deroulement;
         if (!festival.zipcode) {
           throw new Error("zipcode non définit");
         }
@@ -113,7 +113,7 @@ export class FestivalService {
         if (!element.discipline_dominante) {
           throw new Error("catégorie non définie");
         }
-        festival.category = await this.getOrCreateCategory(element.discipline_dominante)
+        festival.category = await this.getOrCreateCategory(element.discipline_dominante);
 
         festival.subCategory = [];
         element.sous_categorie_arts_visuels_et_arts_numeriques ?
@@ -147,22 +147,18 @@ export class FestivalService {
    * @returns
    */
   private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
-    let response: FestivalCategoryEntity = new FestivalCategoryEntity();
-    this.categoryRepository.findOneBy({
-      label: name.trim()
-    })
-      .then(
-        async category => {
-          if (category == null) {
-            response.label = name.trim();
-            response = await this.categoryRepository.save(response);
-          }
-          else {
-            response = category;
-          }
-        }
-      )
-    return response;
+    let response: FestivalCategoryEntity | null = await this.categoryRepository.findOneBy({
+      label: name.trim().toLowerCase()
+    });
+
+    if (!response) {
+      const newCategory = new FestivalCategoryEntity();
+      newCategory.label = name.trim().toLowerCase();
+      return await this.categoryRepository.save(newCategory);
+    }
+    else {
+      return response;
+    }
   }
   /**
    *  creer ou récupére une entité catégory
@@ -171,11 +167,11 @@ export class FestivalService {
    */
   private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
     let category = await this.subCategoryRepository.findOneBy({
-      label: name.trim()
+      label: name.trim().toLowerCase()
     })
     if (!category) {
       category = new FestivalSubCategoryEntity();
-      category.label = name.trim();
+      category.label = name.trim().toLowerCase();
       category = await this.subCategoryRepository.save(category);
     }
     return category;

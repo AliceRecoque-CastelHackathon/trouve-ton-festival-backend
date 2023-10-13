@@ -45,7 +45,9 @@ import { ApiConsumerService } from './api-consumer/api-consumer.service';
 })
 export class AppModule implements NestModule {
   constructor(private readonly apiConsumerSrv : ApiConsumerService){
-    this.apiConsumerSrv.getFestivals();
+    if (process.env.GET_DATA_FROM_EXTERNAL_AT_START === 'true') {
+      this.apiConsumerSrv.getFestivals();
+    }
   }
 
   configure(consumer: MiddlewareConsumer) {
