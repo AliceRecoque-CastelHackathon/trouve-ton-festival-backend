@@ -9,7 +9,7 @@ interface IFestivalGetDto {
   name: string;
   region: string;
   department: string;
-  zipcode: number;
+  zipcode: string;
   address: string;
   website?: string | null;
   email: string;
@@ -17,7 +17,8 @@ interface IFestivalGetDto {
   geoPosX: number;
   geoPosY: number;
   externalId?: string | null;
-
+  dateStart: Date;
+  dateEnd: Date;
 }
 
 export class FestivalGetDto {
@@ -27,7 +28,7 @@ export class FestivalGetDto {
   name: string;
   region: string;
   department: string;
-  zipcode: number;
+  zipcode: string;
   address: string;
   website?: string | null;
   email: string;
@@ -35,6 +36,8 @@ export class FestivalGetDto {
   geoPosX: number;
   geoPosY: number;
   externalId?: string | null;
+  dateStart: Date;
+  dateEnd: Date;
 
   constructor(data?: IFestivalGetDto) {
     if (data) {
@@ -52,6 +55,8 @@ export class FestivalGetDto {
       this.geoPosX = data.geoPosX;
       this.geoPosY = data.geoPosY;
       this.externalId = data.externalId;
+      this.dateStart = data.dateStart;
+      this.dateEnd = data.dateEnd;
     }
   }
 
