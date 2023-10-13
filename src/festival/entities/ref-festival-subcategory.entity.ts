@@ -10,7 +10,7 @@ export class FestivalSubCategoryEntity {
   @PrimaryGeneratedColumn()
   id: number;
   
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar' })
   label: string;
   
 }

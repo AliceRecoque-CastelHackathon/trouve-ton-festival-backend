@@ -86,8 +86,8 @@ export class FestivalService {
       festival.geoPosY = element.geocodage_xy.lat;
       festival.email = element.adresse_e_mail;
       festival.website = element.site_internet_du_festival;
-      element.discipline_dominante?
-      (festival.category = await this.getOrCreateCategory(element.discipline_dominante)):null;
+      element.discipline_dominante ?
+        festival.category = await this.getOrCreateCategory(element.discipline_dominante):null;
       festival.subCategory = [];
       element.sous_categorie_arts_visuels_et_arts_numeriques ?
         festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
@@ -101,8 +101,11 @@ export class FestivalService {
         festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm)) : null;
       element.sous_categorie_spectacle_vivant ?
         festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant)) : null;
-
-      console.warn((await this.festivalsRepository.save(festival)).externalId);
+      
+        this.festivalsRepository.save(festival)
+        .catch(error=> 
+          console.log(`${festival.name}  ${festival.category.label} ${error}`));
+      
 
     });
   }
@@ -111,19 +114,23 @@ export class FestivalService {
    * @param name 
    * @returns 
    */
-  private async getOrCreateCategory(name: string | null): Promise<FestivalCategoryEntity | null> {
-    if (name == null) {
-      return null;
-    }
-    let category = await this.categoryRepository.findOneBy({
-      label: name
+  private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
+    let response : FestivalCategoryEntity = new FestivalCategoryEntity();
+    this.categoryRepository.findOneBy({
+      label: name.trim()
     })
-    if (!category) {
-      category = new FestivalCategoryEntity();
-      category.label = name;
-      category = await this.categoryRepository.save(category);
-    }
-    return category;
+    .then(
+       async category =>{
+          if(category== null){
+            response.label = name.trim();
+            response = await this.categoryRepository.save(response);
+          }
+          else{
+            response = category;
+          }
+      }
+    )
+    return response;
   }
   /**
    *  creer ou récupére une entité catégory
@@ -132,11 +139,11 @@ export class FestivalService {
    */
   private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
     let category = await this.subCategoryRepository.findOneBy({
-      label: name
+      label: name.trim()
     })
     if (!category) {
       category = new FestivalSubCategoryEntity();
-      category.label = name;
+      category.label = name.trim();
       category = await this.subCategoryRepository.save(category);
     }
     return category;
