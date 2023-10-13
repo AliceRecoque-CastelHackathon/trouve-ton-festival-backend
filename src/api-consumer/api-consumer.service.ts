@@ -27,7 +27,6 @@ export class ApiConsumerService {
   async getFestivals(offset: number = 0) {
     const url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
     let festivals_counts: number = 0;
-    let responseObject: I_open_data_festival_response;
 
     do {
       this.httpService.axiosRef.get<I_open_data_festival_response>(url)
