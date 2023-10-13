@@ -25,23 +25,20 @@ export class ApiConsumerService {
    * @returns
    */
   async getFestivals(offset: number = 0) {
-    const url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
+    let url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
     let festivals_counts: number = 0;
-    let responseObject: I_open_data_festival_response;
 
     do {
-      this.httpService.axiosRef.get<I_open_data_festival_response>(url)
-        .catch(error => {
-          throw new BadRequestException(` external url ${url} le serveur de l'api externe n'as pas donnée de réponse \n` + error);
-        })
-        .then(response => {
-          if (festivals_counts == 0) {
-            festivals_counts = response.data.total_count;
-          }
-          this.festivalService.populateFestivals(response.data);
-        });
-        offset += this.fetch_size; 
-    } while (offset < (festivals_counts - this.fetch_size));
+      try {
+        const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url);
+        festivals_counts = response.data.total_count;
+        this.festivalService.populateFestivals(response.data);
+        offset += this.fetch_size;
+        url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
+      } catch (error) {
+        throw new BadRequestException(` external url ${url} le serveur de l'api externe n'as pas donnée de réponse \n` + error);
+      }
+    } while (offset < festivals_counts - this.fetch_size);
 
     console.info(`imports terminés.`)
 

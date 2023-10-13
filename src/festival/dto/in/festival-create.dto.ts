@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Min, MinLength } from "class-validator";
+import { IsArray, IsDate, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Max, Min, MinLength } from "class-validator";
 
 export class FestivalCreateDto {
   @IsNumber()
@@ -9,7 +9,7 @@ export class FestivalCreateDto {
   idSubCategory: number[];
 
   @IsString()
-  @Min(5)
+  @MinLength(5)
   name: string;
 
   @IsString()
@@ -18,9 +18,9 @@ export class FestivalCreateDto {
   @IsString()
   department: string;
 
-  @IsNumber()
-  @IsPostalCode()
-  zipcode: number;
+  @Length(5,5)
+  @IsNotEmpty()
+  zipcode: string;
 
   @IsString()
   @MinLength(10)
@@ -40,4 +40,10 @@ export class FestivalCreateDto {
 
   @IsNumber()
   geoPosY: number;
+
+  @IsDate()
+  dateStart: string;
+
+  @IsDate()
+  dateEnd: string;
 }

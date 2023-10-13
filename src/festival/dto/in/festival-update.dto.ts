@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Min, MinLength } from "class-validator";
+import { IsDate, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsPostalCode, IsString, Length, Min, MinLength } from "class-validator";
 
 export class FestivalUpdateDto {
   @IsNumber()
@@ -22,9 +22,9 @@ export class FestivalUpdateDto {
   @IsString()
   department: string;
 
-  @IsNumber()
-  @IsPostalCode()
-  zipcode: number;
+  @Length(5,5)
+  @IsNotEmpty()
+  zipcode: string;
 
   @IsString()
   @MinLength(10)
@@ -41,4 +41,10 @@ export class FestivalUpdateDto {
 
   @IsNumber()
   geoPosY: number;
+
+  @IsDate()
+  dateStart: string;
+
+  @IsDate()
+  dateEnd: string;
 }

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FestivalEntity } from './entities/festival.entity';
-import { Entity, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalGetManyDto } from './dto/in/festival-get-many.dto';
 import { FestivalCreateDto } from './dto/in/festival-create.dto';
@@ -143,8 +143,8 @@ export class FestivalService {
   }
   /**
    * creer ou récupére une entité catégory
-   * @param name 
-   * @returns 
+   * @param name
+   * @returns
    */
   private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
     let response: FestivalCategoryEntity = new FestivalCategoryEntity();
@@ -166,8 +166,8 @@ export class FestivalService {
   }
   /**
    *  creer ou récupére une entité catégory
-   * @param name 
-   * @returns 
+   * @param name
+   * @returns
    */
   private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
     let category = await this.subCategoryRepository.findOneBy({
@@ -215,6 +215,8 @@ export class FestivalService {
       festival.email = festivalUpdateDto.email;
       festival.geoPosX = festivalUpdateDto.geoPosX;
       festival.geoPosY = festivalUpdateDto.geoPosY;
+      festival.dateStart = new Date(festivalUpdateDto.dateStart);
+      festival.dateEnd = new Date(festivalUpdateDto.dateEnd);
 
       await this.festivalsRepository.save(festival);
 
