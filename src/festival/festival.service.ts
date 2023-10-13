@@ -11,7 +11,7 @@ import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_fes
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
 import { FestivalUpdateDto } from './dto/in/festival-update.dto';
-import { error } from 'console';
+;
 
 
 @Injectable()
@@ -93,7 +93,8 @@ export class FestivalService {
         if (!festival.name) {
           throw new Error("nom du festival non définit");
         }
-        festival.creationDate = element.annee_de_creation_du_festival;
+        festival.period = element.annee_de_creation_du_festival;
+       
         festival.region = element.region_principale_de_deroulement;
         if (!festival.region) {
           throw new Error("région non définie");
@@ -120,7 +121,15 @@ export class FestivalService {
         if (!element.discipline_dominante) {
           throw new Error("catégorie non définie");
         }
-        festival.category = await this.getOrCreateCategory(element.discipline_dominante);
+        festival.period = element.periode_principale_de_deroulement_du_festival;
+        /**
+         * 
+        festival.dateEnd = new Date();
+        if(!festival.dateStart){
+          throw new Error("date end non définie");
+        }
+         */
+        festival.category = await this.getOrCreateCategory(element.discipline_dominante)
 
         festival.subCategory = [];
         element.sous_categorie_arts_visuels_et_arts_numeriques ?
