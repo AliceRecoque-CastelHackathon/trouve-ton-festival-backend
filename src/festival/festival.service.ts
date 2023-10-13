@@ -11,7 +11,7 @@ import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_fes
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
 import { FestivalUpdateDto } from './dto/in/festival-update.dto';
-import { error } from 'console';
+;
 
 
 @Injectable()
@@ -87,6 +87,9 @@ export class FestivalService {
           throw new Error("nom du festival non définit");
         }
         festival.creationDate = element.annee_de_creation_du_festival;
+        if (!festival.creationDate || festival.creationDate.length > 4 ) {
+          throw new Error("date de création non définie");
+        }
         festival.region = element.region_principale_de_deroulement;
         if (!festival.region) {
           throw new Error("région non définie");
@@ -95,7 +98,7 @@ export class FestivalService {
         if (!festival.department) {
           throw new Error("département non définit");
         }
-        festival.zipcode = parseInt(element.code_postal_de_la_commune_principale_de_deroulement);
+        festival.zipcode = element.code_postal_de_la_commune_principale_de_deroulement;
         if (!festival.zipcode) {
           throw new Error("zipcode non définit");
         }
@@ -112,6 +115,14 @@ export class FestivalService {
         festival.website = element.site_internet_du_festival;
         if (!element.discipline_dominante) {
           throw new Error("catégorie non définie");
+        }
+        festival.dateStart = new Date();
+        if(!festival.dateStart){
+          throw new Error("date start non définie");
+        }
+        festival.dateEnd = new Date();
+        if(!festival.dateStart){
+          throw new Error("date end non définie");
         }
         festival.category = await this.getOrCreateCategory(element.discipline_dominante)
 
