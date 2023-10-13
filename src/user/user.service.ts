@@ -11,7 +11,6 @@ import { UserGetDto } from './dto/out/user-get.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserAuthDto } from './dto/protected/user-auth.dto';
 import { UserUpdateDto } from './dto/in/user-update.dto';
-import { JwtModule } from '@nestjs/jwt';
 import { FestivalEntity } from '../festival/entities/festival.entity';
 
 @Injectable()
