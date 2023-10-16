@@ -31,10 +31,10 @@ les participant devaient crée une application web (un peu la base du metier) pr
 Nommé **[Alice Recoque][alice_recoque]** en hommage à l'ingénieur pionnière de l'informatique qui nous a hélas quitté en 2021.
 
 les membres sont :  
-@github/Annayia  notre capitaine et PM
-@github/guzzy  notre lead developeur
-@github/oliviekoe notre developeur FrontEnd
-@github/vincentprouchet notre developpeur BackEnd 
+@github/Annayia  notre capitaine et PM  
+@github/guzzy  notre lead developeur  
+@github/oliviekoe notre developeur FrontEnd  
+@github/vincentprouchet notre developpeur BackEnd  
 
 ### L'illusion du choix
 
