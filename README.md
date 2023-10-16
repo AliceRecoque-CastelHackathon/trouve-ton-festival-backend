@@ -1,35 +1,76 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src=assets/Alice-Recoque.png width="200" alt="alice recoque" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-<p align="center">Un template
-  <a href="https://nestjs.com/" target="_blank">Nest.js</a>
-  pour construire rapidement le back-end de votre API
+
+<p align="center">
+backend de l'appli trouve ton festival
 </p>
 <p align="center">
   <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
   <a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+
 </p>
 
-## Description
+## Contexte
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Connaissez-vous l'événement Castelhackathon ?  
+ Non ?  
+Cet évenement, organisé par le formidalbe personnel du pôle emploi de castelnau le lez, permet à des développeur en recherche d'emploi de se faire connaitre des entreprise au travers d'un hackathon de deux jours.
+
+### l'évenement
+
+Un sujet permettant suffisement de variations pour que les participants puissent y trouver leur bonheur leur est remis le premier jour.
+--- --- 
+Pour l'edition 2023
+les participant devaient crée une application web (un peu la base du metier) prenant des données depuis une API externe et permettant au utilisateurs de les visualiser, de les éditer et d'en ajouter.
+--- ---
+### Notre équipe
+
+Nommé **[Alice Recoque][alice_recoque]** en hommage à l'ingénieur pionnière de l'informatique qui nous a hélas quitté en 2021.
+
+les membres sont :  
+@github/Annayia  notre capitaine et PM
+@github/guzzy  notre lead developeur
+@github/oliviekoe notre developeur FrontEnd
+@github/vincentprouchet notre developpeur BackEnd 
+
+### L'illusion du choix
+
+Je plaisante,  
+chaque équipe à reçu exactement le même sujet nous pouvions librmement choisit l'API à laquelle nous connecter les données fournies guidant naturellement le theme de l'application.
+
+### le choix de notre équipe
+
+Nous avons choisit [l'API des festivals][api_des_festivals]  
+et apparement tous les autres groupe aussi...  
+on aurait peut-être dû se concerter.
+
 
 ## Installation
 
+faites un clone du projet
+ouvrez un terminal (préferez bash)
+et faite un :
 ```bash
 $ yarn install
 ```
-After packages installation it is necessary to create a file named .env.development in the environments directory, based on the file : environments/.env.template.
+après l'installation des packages n'hésitez pas à faire un :
+```bash
+$ yarn upgrade
+```
+vous devrez ensuite créer deux fichier dans le dossier environnement pour cela copiez directement le fichie .env.template.  
 
-For production purpose you will need to create a file named .env.production.
+il vous faut :  
+.env.development  
+.env.production  
 
-You should then complete the created file.
+pensez à change la première ligne node_env pour l'adapter à chaque fichier  
+development
+production
 
-## Running the app
+## démarrer le backend
 
 ```bash
 # Development
@@ -42,7 +83,7 @@ $ yarn start:dev
 $ yarn start:prod
 ```
 
-## Test
+## lancer les tests
 
 ```bash
 # Run unit tests
@@ -74,12 +115,24 @@ $ yarn typeorm migration:run --fake -d ./typeorm_migrations/datasources/migratio
 $ yarn typeorm migration:revert --fake -d ./typeorm_migrations/datasources/migrations-datasource.ts
 ```
 
-## Support
+## Soutenez NestJs
 
-Nest est un projet OpenSource sous license MIT
-Il peut grandir grâce aux soutient de ses sponsors.
-Si vous souhaitez les rejoindre, [regardez ici](https://docs.nestjs.com/support).
+
+Nest est un projet OpenSource.
+Il peut vivre et grandir grâce aux soutient de ses sponsors.
+Si vous souhaitez les rejoindre, [regardez ici][support_nestJs].
 
 ## License
 
-Nest est sous licence [MIT](MITLICENSE).
+Nest est sous licence [MIT][MITLICENSE].
+
+
+[api_des_festivals]: https://data.culture.gouv.fr/explore/dataset/festivals-global-festivals-_-pl/api/ "merci data.gouv"
+[MITLICENSE]: MITLICENSE
+[doc_nestJS]: https://docs.nestjs.com
+[support_nestJs]: https://docs.nestjs.com/support
+[alice_recoque]: https://fr.wikipedia.org/wiki/Alice_Recoque
+[alice_recoque_photo]: assets/Alice-Recoque.png
+
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
