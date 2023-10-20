@@ -145,12 +145,18 @@ export class FestivalEntity {
   * ajoute une sous-categorie à l'entité
     controle la pré-existance d'une collection
     controle que les données insérées ne soient pas nulles
+    controle qu'il n'y pas de doublon dans les entitées ajoutées à la collection
   * @param data 
   */
   addSubcategory(data: FestivalSubCategoryEntity | null): void {
+    // controle collection initialisée
     if (this.subCategory == undefined) this.subCategory = [];
+    // controle non null
     if (data != null) {
-      this.subCategory.push(data);
+      // controle des doublon
+      if (!this.subCategory.find(e => e.id == data.id)) {
+        this.subCategory.push(data);
+      }
     }
   }
 }
