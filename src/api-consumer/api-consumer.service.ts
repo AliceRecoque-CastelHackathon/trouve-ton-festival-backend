@@ -3,6 +3,7 @@ import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { I_open_data_festival_response } from './interface/i_open_data_festival_response';
 import { FestivalService } from '../festival/festival.service';
+import { info } from 'console';
 
 @Injectable()
 export class ApiConsumerService {
@@ -19,7 +20,7 @@ export class ApiConsumerService {
   }
   /**
    * retourne un json de festival
-   * ils ne les retourne que par un maximul de 100 à chaque fois
+   * ils ne les retourne que par un maximun de 100 à chaque fois
    * le paramètre offset permet de définir le point de départ de la liste
    * @param offset point de départ de la liste
    * @returns
@@ -32,15 +33,19 @@ export class ApiConsumerService {
       try {
         const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url);
         festivals_counts = response.data.total_count;
-        await this.festivalService.populateFestivals(response.data);
+        this.festivalService.populateFestivals(response.data);
         offset += this.fetch_size;
         url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
       } catch (error) {
-        throw new BadRequestException(` external url ${url} le serveur de l'api externe n'as pas donnée de réponse \n` + error);
+        throw new BadRequestException(` external ${url} le serveur de l'api externe n'as pas donnée de réponse \n
+        \t${error.name}\n
+        \t\t${error.message}`);
       }
-    } while (offset < festivals_counts - this.fetch_size);
-
-    console.info(`imports terminés.`)
+    } while (offset < (festivals_counts - this.fetch_size));
+    info(`import de ${festivals_counts} festivals`);
+    info(`insérés/ mis à jour en base ${this.festivalService.get_db_inserted()}`);
+    info(`echecs ${this.festivalService.get_total_insertion_errror()}`);
+    console.info(`import terminé.`)
 
   }
 }

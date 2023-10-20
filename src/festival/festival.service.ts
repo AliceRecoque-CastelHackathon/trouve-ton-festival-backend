@@ -1,21 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In, Like, Repository } from 'typeorm';
+
 import { FestivalEntity } from './entities/festival.entity';
-import { In, Repository } from 'typeorm';
 import { FestivalGetDto } from './dto/out/festival-get.dto';
 import { FestivalGetManyDto } from './dto/in/festival-get-many.dto';
 import { FestivalCreateDto } from './dto/in/festival-create.dto';
+import { FestivalUpdateDto } from './dto/in/festival-update.dto';
 
 import { I_open_data_festival_response } from 'src/api-consumer/interface/i_open_data_festival_response';
 import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_festival';
+
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
-import { FestivalUpdateDto } from './dto/in/festival-update.dto';
+import { log, warn } from 'console';
 ;
 
 
 @Injectable()
 export class FestivalService {
+
+  private api_count: number;
+  private db_inserted: number = 0;
+  private total_insertion_errror: number = 0;
+
   constructor(
     @InjectRepository(FestivalEntity)
     private festivalsRepository: Repository<FestivalEntity>,
@@ -71,120 +79,90 @@ export class FestivalService {
 
     return festivalEntity ? new FestivalGetDto(festivalEntity) : null;
   }
-
+  /**
+   * convertit les donnée de l'interface I_open_data_festival_response
+   * recupére les entitées déjà existante (réduire les doublons)
+   * insére un nouveau festival 
+   * met à jour l'existant
+   * @param data 
+   */
   async populateFestivals(data: I_open_data_festival_response) {
-
     data.results.forEach(async (element: I_open_data_festival) => {
       let inserttival: boolean = false;
       let festival: FestivalEntity = new FestivalEntity();
       await this.festivalsRepository.findOneBy({
         externalId: element.identifiant
-      }).then(response => {
+      }).then((response: FestivalEntity) => {
         if (response != null)
           festival = response;
-      });
+      }).catch((e: Error) => { });
       try {
         inserttival = false;
-        festival.externalId = element.identifiant;
-        if (!festival.externalId) {
-          throw new Error("externalId non définie");
-        }
-        festival.name = element.nom_du_festival;
-        if (!festival.name) {
-          throw new Error("nom du festival non définit");
-        }
-        festival.period = element.annee_de_creation_du_festival;
-       
-        festival.region = element.region_principale_de_deroulement;
-        if (!festival.region) {
-          throw new Error("région non définie");
-        }
-        festival.department = element.departement_principal_de_deroulement;
-        if (!festival.department) {
-          throw new Error("département non définit");
-        }
-        festival.zipcode = element.code_postal_de_la_commune_principale_de_deroulement;
-        if (!festival.zipcode) {
-          throw new Error("zipcode non définit");
-        }
-        festival.address = element.adresse_postale;
-        festival.geoPosX = element.geocodage_xy.lon;
-        if (!festival.geoPosX) {
-          throw new Error("geoposition longitude manquante non définie");
-        }
-        festival.geoPosY = element.geocodage_xy.lat;
-        if (!festival.geoPosY) {
-          throw new Error("geoposition latitude manquante non définie");
-        }
-        festival.email = element.adresse_e_mail;
-        festival.website = element.site_internet_du_festival;
-        if (!element.discipline_dominante) {
-          throw new Error("catégorie non définie");
-        }
-        festival.period = element.periode_principale_de_deroulement_du_festival;
-        /**
-         * 
-        festival.dateEnd = new Date();
-        if(!festival.dateStart){
-          throw new Error("date end non définie");
-        }
-         */
-        festival.category = await this.getOrCreateCategory(element.discipline_dominante)
-
+        festival.initFromOpenData(element);
+        festival.category = await this.getOrCreateCategory(element.discipline_dominante);
         festival.subCategory = [];
-        element.sous_categorie_arts_visuels_et_arts_numeriques ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques)) : null;
-        element.sous_categorie_cinema_et_audiovisuel ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel)) : null;
-        element.sous_categorie_livre_et_litterature ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature)) : null;
-        element.sous_categorie_musique ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique)) : null;
-        element.sous_categorie_musique_cnm ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm)) : null;
-        element.sous_categorie_spectacle_vivant ?
-          festival.subCategory.push(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant)) : null;
+        festival = await this.festivalsRepository.save(festival);
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques));
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel));
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature));
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique));
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm));
+        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant));
+
         inserttival = true;
       } catch (error) {
-        console.log(`${festival.name} ${error}`);
+        this.total_insertion_errror += 1;
+        console.log(`${festival.name}  non ajouté cause :\n\t${error.name}\n\t\t${error.message}`);
       }
+      /** 
+      les données ne sont insérées que si aucune erreurs n'est levé
+      nous pourrions le placer dans le try and catch
+      mais l'idée et de rendre le save asynchrone 
+      et comme mon lead dev n'aime pas les then and catch (c'est vrai que c'est un peu moche)
+      ben on le place ainsi
+      c'est simple et ça fonctionne comme attendut
+       */
       if (inserttival) {
         this.festivalsRepository.save(festival)
-          .catch(error =>
-            console.log(`${festival.name} ${error}`));
+          .then(data => { this.db_inserted = this.db_inserted + 1; })
+          .catch((error: Error) => {
+            console.log(`${festival.name}\n\t${error.name}\n\t\t${error.message}`);
+            this.total_insertion_errror = this.total_insertion_errror + 1;
+          })
       }
 
 
     });
+  }
+  /**
+   * récupére une entité catégory, lma créer si elle n'existe pas
+   * @param name
+   * @returns
+   */
+  private async getOrCreateCategory(name: string | null): Promise<FestivalCategoryEntity> {
+    if (name == null) { throw Error('nom de catégorie null') };
+    return await this.categoryRepository.findOneByOrFail({
+      label: Like(`%${name.trim().toLowerCase()}%`)
+    })
+      // si aucune n'est trouvée pas on en créer une 
+      .catch(async (e: Error) => {
+        const newCategory = new FestivalCategoryEntity();
+        newCategory.label = name.trim().toLowerCase();
+        return await this.categoryRepository.save(newCategory);
+      });
   }
   /**
    * creer ou récupére une entité catégory
    * @param name
-   * @returns
+   * @returns une entité ou null
    */
-  private async getOrCreateCategory(name: string): Promise<FestivalCategoryEntity> {
-    let response: FestivalCategoryEntity | null = await this.categoryRepository.findOneBy({
-      label: name.trim().toLowerCase()
-    });
+  private async getOrCreateSubcategory(name: string | null): Promise<FestivalSubCategoryEntity | null> {
+    if (name == null) return null;
 
-    if (!response) {
-      const newCategory = new FestivalCategoryEntity();
-      newCategory.label = name.trim().toLowerCase();
-      return await this.categoryRepository.save(newCategory);
-    }
-    else {
-      return response;
-    }
-  }
-  /**
-   *  creer ou récupére une entité catégory
-   * @param name
-   * @returns
-   */
-  private async getOrCreateSubcategory(name: string): Promise<FestivalSubCategoryEntity> {
     let category = await this.subCategoryRepository.findOneBy({
-      label: name.trim().toLowerCase()
+      label: Like(`%${name.trim().toLowerCase()}%`)
     })
+    // si aucune n'est trouvée on en créer une
     if (!category) {
       category = new FestivalSubCategoryEntity();
       category.label = name.trim().toLowerCase();
@@ -236,5 +214,18 @@ export class FestivalService {
     } else {
       throw new BadRequestException('festival to modify not found');
     }
+  }
+
+  public set_Api_Count(qt: number): void {
+    this.api_count = qt;
+  }
+  public get_Api_Count(): number {
+    return this.api_count;
+  }
+  public get_db_inserted(): number {
+    return this.db_inserted
+  }
+  public get_total_insertion_errror(): number {
+    return this.total_insertion_errror;
   }
 }

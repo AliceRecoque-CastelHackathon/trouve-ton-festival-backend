@@ -1,52 +1,51 @@
-import { I_open_data_festival } from "src/api-consumer/interface/i_open_data_festival";
-import { FestivalCategoryEntity } from "src/festival/entities/ref-festival-category.entity";
-import { FestivalSubCategoryEntity } from "src/festival/entities/ref-festival-subcategory.entity";
+import { FestivalCategoryEntity } from 'src/festival/entities/ref-festival-category.entity';
+import { FestivalSubCategoryEntity } from 'src/festival/entities/ref-festival-subcategory.entity';
 
 interface IFestivalGetDto {
   id: number;
-  category: FestivalCategoryEntity|null;
-  subCategory: FestivalSubCategoryEntity[]|null;
+  category: FestivalCategoryEntity | null;
+  subCategory: FestivalSubCategoryEntity[] | null;
   name: string;
   region: string;
   department: string;
   zipcode: string;
   address?: string | null;
   website?: string | null;
-  email: string;
+  email: string | null;
   creationDate?: string | null;
   geoPosX: number;
   geoPosY: number;
   externalId?: string | null;
   dateStart: Date;
   dateEnd: Date;
-  period: string |null;
+  period: string | null;
 }
 
 export class FestivalGetDto {
   id: number;
-  category: FestivalCategoryEntity|null;
-  subCategory: FestivalSubCategoryEntity[]|null;
+  category: FestivalCategoryEntity | null;
+  subCategory: FestivalSubCategoryEntity[] | null;
   name: string;
   region: string;
   department: string;
   zipcode: string;
   address?: string | null;
   website?: string | null;
-  email: string;
+  email: string | null;
   creationDate?: string | null;
   geoPosX: number;
   geoPosY: number;
   externalId?: string | null;
-  dateStart: Date|null;
-  dateEnd: Date|null;
-  period: string|null;
+  dateStart: Date | null;
+  dateEnd: Date | null;
+  period: string | null;
 
   constructor(data?: IFestivalGetDto) {
     if (data) {
       this.id = data.id;
-      this.category = data.category
+      this.category = data.category;
       this.subCategory = data.subCategory;
-      this.name = data.name
+      this.name = data.name;
       this.region = data.region;
       this.department = data.department;
       this.zipcode = data.zipcode;
@@ -62,4 +61,5 @@ export class FestivalGetDto {
       this.period = data.period;
     }
   }
+
 }
