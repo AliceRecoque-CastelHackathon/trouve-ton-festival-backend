@@ -86,8 +86,12 @@ export class FestivalService {
    * met à jour l'existant
    * @param data 
    */
-  async populateFestivals(data: I_open_data_festival_response) {
+  async populateFestivals(data: I_open_data_festival_response, offset: number = 0) {
+    let count: number = 0;
+    let added: number = 0;
+    let error_count: number = 0;
     data.results.forEach(async (element: I_open_data_festival) => {
+      count += 1;
       let inserttival: boolean = false;
       let festival: FestivalEntity = new FestivalEntity();
       await this.festivalsRepository.findOneBy({
@@ -100,39 +104,22 @@ export class FestivalService {
         inserttival = false;
         festival.initFromOpenData(element);
         festival.category = await this.getOrCreateCategory(element.discipline_dominante);
-        festival.subCategory = [];
         festival = await this.festivalsRepository.save(festival);
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques));
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel));
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature));
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique));
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm));
-        festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant));
 
-        inserttival = true;
+        await this.festivalsRepository.save(festival)
+          .then(async data => {
+            this.db_inserted += 1;
+            added += 1;
+            // await this.import_add_subCategory(data, element);
+          })
       } catch (error) {
         this.total_insertion_errror += 1;
-        console.log(`${festival.name}  non ajouté cause :\n\t${error.name}\n\t\t${error.message}`);
+        error_count += 1;
+        console.log(`N°${count + offset}/${data.total_count}:${festival.name}\n\t${error.name}\n\t\t${error.message}`);
       }
-      /** 
-      les données ne sont insérées que si aucune erreurs n'est levé
-      nous pourrions le placer dans le try and catch
-      mais l'idée et de rendre le save asynchrone 
-      et comme mon lead dev n'aime pas les then and catch (c'est vrai que c'est un peu moche)
-      ben on le place ainsi
-      c'est simple et ça fonctionne comme attendut
-       */
-      if (inserttival) {
-        this.festivalsRepository.save(festival)
-          .then(data => { this.db_inserted = this.db_inserted + 1; })
-          .catch((error: Error) => {
-            console.log(`${festival.name}\n\t${error.name}\n\t\t${error.message}`);
-            this.total_insertion_errror = this.total_insertion_errror + 1;
-          })
-      }
-
 
     });
+
   }
   /**
    * récupére une entité catégory, lma créer si elle n'existe pas
@@ -227,5 +214,23 @@ export class FestivalService {
   }
   public get_total_insertion_errror(): number {
     return this.total_insertion_errror;
+  }
+  /**
+   * impote et ajoute des sous-catégories à une entité de festival
+  oui c'est de la spaguertification du code
+  je n'ai fait cela que pour reduire et clarifier le code de la methode 
+  populatefestival
+
+   * @param festival 
+   * @param element 
+   */
+  private async import_add_subCategory(festival: FestivalEntity, element: I_open_data_festival) {
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques));
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel));
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature));
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique));
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm));
+    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant));
+    this.festivalsRepository.save(festival);
   }
 }

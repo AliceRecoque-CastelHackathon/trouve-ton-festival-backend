@@ -33,8 +33,8 @@ export class ApiConsumerService {
       try {
         const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url);
         festivals_counts = response.data.total_count;
-        this.festivalService.populateFestivals(response.data);
-        offset += this.fetch_size;
+        this.festivalService.populateFestivals(response.data, offset);
+        offset += response.data.results.length;
         url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
       } catch (error) {
         throw new BadRequestException(` external ${url} le serveur de l'api externe n'as pas donnée de réponse \n
@@ -42,10 +42,8 @@ export class ApiConsumerService {
         \t\t${error.message}`);
       }
     } while (offset < (festivals_counts - this.fetch_size));
-    info(`import de ${festivals_counts} festivals`);
-    info(`insérés/ mis à jour en base ${this.festivalService.get_db_inserted()}`);
-    info(`echecs ${this.festivalService.get_total_insertion_errror()}`);
-    console.info(`import terminé.`)
+
+    console.info(`import terminé.`);
 
   }
 }
