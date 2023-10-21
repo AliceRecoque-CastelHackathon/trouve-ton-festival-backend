@@ -3,7 +3,10 @@ import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { I_open_data_festival_response } from './interface/i_open_data_festival_response';
 import { FestivalService } from '../festival/festival.service';
-import { info } from 'console';
+import { info, log } from 'console';
+import { AxiosError } from 'axios';
+import { stringify } from 'querystring';
+import { json } from 'node:stream/consumers';
 
 @Injectable()
 export class ApiConsumerService {
@@ -25,25 +28,35 @@ export class ApiConsumerService {
    * @param offset point de départ de la liste
    * @returns
    */
-  async getFestivals(offset: number = 0) {
+  async getFestivals(offset: number = 0, firstcall: boolean = true) {
+    let import_complete = false;
+    //on met à jour l'url
     let url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
-    let festivals_counts: number = 0;
-
-    do {
-      try {
-        const response = await this.httpService.axiosRef.get<I_open_data_festival_response>(url);
-        festivals_counts = response.data.total_count;
+    // on recupére le jeu de données
+    this.httpService.axiosRef.get<I_open_data_festival_response>(url)
+      // en réussite
+      .then(response => {
         this.festivalService.populateFestivals(response.data, offset);
+        // mis a jour de l'offest
         offset += response.data.results.length;
-        url = `${this.baseUrl}?limit=${this.fetch_size}&offset=${offset}`;
-      } catch (error) {
-        throw new BadRequestException(` external ${url} le serveur de l'api externe n'as pas donnée de réponse \n
-        \t${error.name}\n
-        \t\t${error.message}`);
-      }
-    } while (offset < (festivals_counts - this.fetch_size));
+        // si l'on est pas au terme du jeu de  données 
+        if (offset <= response.data.total_count - response.data.results.length) {
+          // la fonction s'appelle à nouveau
+          this.getFestivals(offset);
+        }
+        else {
+          log(`import complete`)
+        }
 
-    console.info(`import terminé.`);
+      })
+      // en echec
+      .catch((error: AxiosError) => {
+        throw new BadRequestException(`${url}\nle serveur de l'api externe n'as pas donnée de réponse
+        \t${error.name}\t${error.message}
+        ${JSON.stringify(error.response?.data)}
+        `);
 
+      })
+      ;
   }
 }

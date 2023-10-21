@@ -19,11 +19,6 @@ import { log, warn } from 'console';
 
 @Injectable()
 export class FestivalService {
-
-  private api_count: number;
-  private db_inserted: number = 0;
-  private total_insertion_errror: number = 0;
-
   constructor(
     @InjectRepository(FestivalEntity)
     private festivalsRepository: Repository<FestivalEntity>,
@@ -87,12 +82,10 @@ export class FestivalService {
    * @param data 
    */
   async populateFestivals(data: I_open_data_festival_response, offset: number = 0) {
-    let count: number = 0;
     let added: number = 0;
-    let error_count: number = 0;
-    data.results.forEach(async (element: I_open_data_festival) => {
+    data.results.forEach(async (element: I_open_data_festival, count: number) => {
       count += 1;
-      let inserttival: boolean = false;
+
       let festival: FestivalEntity = new FestivalEntity();
       await this.festivalsRepository.findOneBy({
         externalId: element.identifiant
@@ -101,21 +94,18 @@ export class FestivalService {
           festival = response;
       }).catch((e: Error) => { });
       try {
-        inserttival = false;
+
         festival.initFromOpenData(element);
         festival.category = await this.getOrCreateCategory(element.discipline_dominante);
         festival = await this.festivalsRepository.save(festival);
 
-        await this.festivalsRepository.save(festival)
-          .then(async data => {
-            this.db_inserted += 1;
+        this.festivalsRepository.save(festival)
+          .then(data => {
             added += 1;
-            // await this.import_add_subCategory(data, element);
+            //this.import_add_subCategory(data, element);
           })
       } catch (error) {
-        this.total_insertion_errror += 1;
-        error_count += 1;
-        console.log(`N°${count + offset}/${data.total_count}:${festival.name}\n\t${error.name}\n\t\t${error.message}`);
+        console.log(`N° ${count + offset}/${data.total_count}: ${festival.name}\n\t${error.name}\t${error.message}`);
       }
 
     });
@@ -135,7 +125,12 @@ export class FestivalService {
       .catch(async (e: Error) => {
         const newCategory = new FestivalCategoryEntity();
         newCategory.label = name.trim().toLowerCase();
-        return await this.categoryRepository.save(newCategory);
+        return await this.categoryRepository.save(newCategory)
+          .catch((error: Error) => {
+            console.error(`impossible d'insérer la catégorie ${name}`);
+            throw error;
+          })
+          ;
       });
   }
   /**
@@ -201,19 +196,6 @@ export class FestivalService {
     } else {
       throw new BadRequestException('festival to modify not found');
     }
-  }
-
-  public set_Api_Count(qt: number): void {
-    this.api_count = qt;
-  }
-  public get_Api_Count(): number {
-    return this.api_count;
-  }
-  public get_db_inserted(): number {
-    return this.db_inserted
-  }
-  public get_total_insertion_errror(): number {
-    return this.total_insertion_errror;
   }
   /**
    * impote et ajoute des sous-catégories à une entité de festival

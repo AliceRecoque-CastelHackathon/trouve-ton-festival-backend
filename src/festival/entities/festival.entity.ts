@@ -10,6 +10,11 @@ import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_fes
   },
 })
 export class FestivalEntity {
+
+  private static EXTERNALID_MAX_LENGTH = 30;
+  private static VARCHAR_MAX_LENGTH = 255;
+  private static ZIPCODE_MAX_LENGTH = 5;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -77,8 +82,8 @@ export class FestivalEntity {
       - pour ne pas éparpiller le code
       - l'entité est bien ce qui permet le mieux de définir ce que sont des valeurs valides
     la logique de controle est inversé en coparaison du code originel
-      - le test est faite sur l'entité passé à la fonction
-      - les nouvelles données ne sont insérées dans l'entitée que APRES la validation
+      - le test est fait sur l'entité passé à la fonction
+      - les nouvelles données ne sont insérées dans l'entitée que APRES validation
   * @param data : I_open_data_festival
    */
   initFromOpenData(data: I_open_data_festival): void {
@@ -86,10 +91,16 @@ export class FestivalEntity {
     if (!data.identifiant) {
       throw new Error('externalId non défini');
     }
+    if (data.identifiant.length > FestivalEntity.EXTERNALID_MAX_LENGTH) {
+      throw new Error('externalId trop longue');
+    }
     this.externalId = data.identifiant;
 
     if (!data.nom_du_festival) {
       throw new Error('nom du festival non défini');
+    }
+    if (data.nom_du_festival.length > FestivalEntity.VARCHAR_MAX_LENGTH) {
+      throw new Error('nom du festival trop long');
     }
     this.name = data.nom_du_festival;
 
@@ -106,24 +117,47 @@ export class FestivalEntity {
     if (!data.code_postal_de_la_commune_principale_de_deroulement) {
       throw new Error('zipcode non défini');
     }
+    if (data.code_postal_de_la_commune_principale_de_deroulement.length > FestivalEntity.ZIPCODE_MAX_LENGTH) {
+      throw new Error('code postal non comforme');
+    }
     this.zipcode = data.code_postal_de_la_commune_principale_de_deroulement;
 
     this.address = data.adresse_postale;
 
-    if (!data.geocodage_xy.lon) {
+    if (data.geocodage_xy == null) {
+      throw new Error('geoposition non définie');
+    }
+    if (data.geocodage_xy.lon == null) {
       throw new Error('geoposition longitude manquante non définie');
     }
     this.geoPosX = data.geocodage_xy.lon;
 
-    if (!data.geocodage_xy.lat) {
+    if (data.geocodage_xy.lat == null) {
       throw new Error('geoposition latitude manquante non définie');
     }
     this.geoPosY = data.geocodage_xy.lat;
-
+    if (data.adresse_e_mail != null) {
+      if (data.adresse_e_mail.length > FestivalEntity.VARCHAR_MAX_LENGTH)
+        throw new Error('adresse trop longue');
+    }
     this.email = data.adresse_e_mail;
+
+    if (data.site_internet_du_festival != null) {
+      if (data.site_internet_du_festival.length > FestivalEntity.VARCHAR_MAX_LENGTH)
+        throw new Error('adresse internet trop longue');
+    }
     this.website = data.site_internet_du_festival;
 
+    if (data.annee_de_creation_du_festival != null) {
+      if (data.annee_de_creation_du_festival.length > FestivalEntity.VARCHAR_MAX_LENGTH)
+        throw new Error('année de création trop longue');
+    }
     this.creationDate = data.annee_de_creation_du_festival;
+
+    if (data.periode_principale_de_deroulement_du_festival != null) {
+      if (data.periode_principale_de_deroulement_du_festival.length > FestivalEntity.VARCHAR_MAX_LENGTH)
+        throw new Error('période du festival trop longue');
+    }
     this.period = data.periode_principale_de_deroulement_du_festival;
     // les dates     
     /**
@@ -149,10 +183,10 @@ export class FestivalEntity {
   * @param data 
   */
   addSubcategory(data: FestivalSubCategoryEntity | null): void {
-    // controle collection initialisée
-    if (this.subCategory == undefined) this.subCategory = [];
     // controle non null
     if (data != null) {
+      // controle collection initialisée
+      if (this.subCategory == undefined) this.subCategory = [];
       // controle des doublon
       if (!this.subCategory.find(e => e.id == data.id)) {
         this.subCategory.push(data);
