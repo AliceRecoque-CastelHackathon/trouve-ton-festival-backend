@@ -5,8 +5,6 @@ import { I_open_data_festival_response } from './interface/i_open_data_festival_
 import { FestivalService } from '../festival/festival.service';
 import { info, log } from 'console';
 import { AxiosError } from 'axios';
-import { stringify } from 'querystring';
-import { json } from 'node:stream/consumers';
 
 @Injectable()
 export class ApiConsumerService {

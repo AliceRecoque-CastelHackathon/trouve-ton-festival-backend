@@ -13,7 +13,7 @@ import { I_open_data_festival } from 'src/api-consumer/interface/i_open_data_fes
 
 import { FestivalCategoryEntity } from './entities/ref-festival-category.entity';
 import { FestivalSubCategoryEntity } from './entities/ref-festival-subcategory.entity';
-import { log, warn } from 'console';
+import { error, log, warn } from 'console';
 ;
 
 
@@ -100,9 +100,12 @@ export class FestivalService {
         festival = await this.festivalsRepository.save(festival);
 
         this.festivalsRepository.save(festival)
-          .then(data => {
+          .then(async data_festival => {
             added += 1;
-            //this.import_add_subCategory(data, element);
+            await this.import_add_subCategory(data_festival, element).catch(
+              (er: Error) => {
+                console.log(`N° ${count + offset}/${data.total_count}: ${festival.name}\n\t${error.name}\t${er.message}`);
+              });
           })
       } catch (error) {
         console.log(`N° ${count + offset}/${data.total_count}: ${festival.name}\n\t${error.name}\t${error.message}`);
@@ -139,17 +142,23 @@ export class FestivalService {
    * @returns une entité ou null
    */
   private async getOrCreateSubcategory(name: string | null): Promise<FestivalSubCategoryEntity | null> {
-    if (name == null) return null;
+    if (name == null || name.match('null')) return null;
 
-    let category = await this.subCategoryRepository.findOneBy({
+    let category: FestivalSubCategoryEntity | null = new FestivalSubCategoryEntity();
+    await this.subCategoryRepository.findOneByOrFail({
       label: Like(`%${name.trim().toLowerCase()}%`)
     })
-    // si aucune n'est trouvée on en créer une
-    if (!category) {
-      category = new FestivalSubCategoryEntity();
-      category.label = name.trim().toLowerCase();
-      category = await this.subCategoryRepository.save(category);
-    }
+      .then((data: FestivalSubCategoryEntity) => category = data)
+      .catch(async () => {
+        category = new FestivalSubCategoryEntity()
+        category.label = name.trim().toLowerCase();
+        category = (await this.subCategoryRepository.save(category).catch((error: Error) => {
+          log(`impossible d'ajouter la sous-catégorie ${name}`);
+          return null;
+        }));
+
+      }
+      )
     return category;
   }
 
@@ -198,7 +207,7 @@ export class FestivalService {
     }
   }
   /**
-   * impote et ajoute des sous-catégories à une entité de festival
+   * importe et ajoute des sous-catégories à une entité de festival
   oui c'est de la spaguertification du code
   je n'ai fait cela que pour reduire et clarifier le code de la methode 
   populatefestival
@@ -206,13 +215,25 @@ export class FestivalService {
    * @param festival 
    * @param element 
    */
-  private async import_add_subCategory(festival: FestivalEntity, element: I_open_data_festival) {
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_arts_visuels_et_arts_numeriques));
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_cinema_et_audiovisuel));
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_livre_et_litterature));
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique));
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_musique_cnm));
-    festival.addSubcategory(await this.getOrCreateSubcategory(element.sous_categorie_spectacle_vivant));
-    this.festivalsRepository.save(festival);
+  private async import_add_subCategory(festival: FestivalEntity, element: I_open_data_festival): Promise<FestivalEntity> {
+    let subCategory = "";
+    let datas = [];
+
+    subCategory += `${element.sous_categorie_arts_visuels_et_arts_numeriques}`;
+    subCategory += `; ${element.sous_categorie_cinema_et_audiovisuel}`;
+    subCategory += `; ${element.sous_categorie_livre_et_litterature}`;
+    subCategory += `; ${element.sous_categorie_musique}`;
+    subCategory += `; ${element.sous_categorie_musique_cnm}`;
+    subCategory += `; ${element.sous_categorie_spectacle_vivant}`;
+
+    datas = subCategory.split(/\(|\/| et | ou |,|;/)
+      .filter((item, index, elements) => elements[elements.indexOf(item)])
+      ;
+    // recupération ou ajout de la sous-catégorie
+    datas.forEach(async sub => {
+      festival.addSubcategory(await this.getOrCreateSubcategory(sub));
+    });
+
+    return this.festivalsRepository.save(festival);
   }
 }

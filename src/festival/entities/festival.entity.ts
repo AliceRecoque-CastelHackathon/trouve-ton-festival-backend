@@ -183,12 +183,12 @@ export class FestivalEntity {
   * @param data 
   */
   addSubcategory(data: FestivalSubCategoryEntity | null): void {
+    // controle collection initialisée
+    if (this.subCategory == undefined) this.subCategory = [];
     // controle non null
     if (data != null) {
-      // controle collection initialisée
-      if (this.subCategory == undefined) this.subCategory = [];
       // controle des doublon
-      if (!this.subCategory.find(e => e.id == data.id)) {
+      if (this.subCategory.find(e => e.id == data.id) == undefined) {
         this.subCategory.push(data);
       }
     }
