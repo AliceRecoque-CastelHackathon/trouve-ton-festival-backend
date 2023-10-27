@@ -87,11 +87,10 @@ export class FestivalService {
       count += 1;
 
       let festival: FestivalEntity = new FestivalEntity();
-      await this.festivalsRepository.findOneBy({
+      await this.festivalsRepository.findOneByOrFail({
         externalId: element.identifiant
       }).then((response: FestivalEntity) => {
-        if (response != null)
-          festival = response;
+        festival = response;
       }).catch((e: Error) => { });
       try {
 
@@ -102,7 +101,7 @@ export class FestivalService {
         this.festivalsRepository.save(festival)
           .then(async data_festival => {
             added += 1;
-            await this.import_add_subCategory(data_festival, element).catch(
+            this.import_add_subCategory(data_festival, element).catch(
               (er: Error) => {
                 console.log(`N° ${count + offset}/${data.total_count}: ${festival.name}\n\t${error.name}\t${er.message}`);
               });
